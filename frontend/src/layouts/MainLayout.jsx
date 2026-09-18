@@ -1,29 +1,56 @@
-import React from 'react';
-import Header from '../components/Header';
+import React, { useState } from 'react';
+import Sidebar from '../components/layout/Sidebar';
+import Header from '../components/layout/Header';
+import MobileDrawer from '../components/layout/MobileDrawer';
 import { useLanguage } from '../hooks/useLanguage';
 
-export const MainLayout = ({ children }) => {
+export const MainLayout = ({
+  activePage,
+  onNavigate,
+  pageTitle,
+  pageSubtitle,
+  children,
+}) => {
   const { t } = useLanguage();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
-      <main style={{ flex: 1 }}>
-        <div className="app-container">
+    <div className="soc-dashboard-layout">
+      {/* Desktop Persistent Sidebar */}
+      <Sidebar
+        activePage={activePage}
+        onNavigate={onNavigate}
+      />
+
+      {/* Mobile Drawer */}
+      <MobileDrawer
+        isOpen={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        activePage={activePage}
+        onNavigate={onNavigate}
+      />
+
+      {/* Main Viewport Container */}
+      <div className="soc-main-viewport">
+        <Header
+          pageTitle={pageTitle}
+          pageSubtitle={pageSubtitle}
+          onToggleMobile={() => setMobileOpen(true)}
+        />
+
+        <main className="soc-content-area" role="main">
           {children}
-        </div>
-      </main>
-      <footer className="app-footer">
-        <div className="app-container">
-          <div className="footer-inner">
+        </main>
+
+        <footer className="soc-dashboard-footer">
+          <div className="soc-footer-inner">
             <span>{t('footer.copyright')}</span>
             <span>{t('footer.phaseNote')}</span>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };
 
 export default MainLayout;
-
