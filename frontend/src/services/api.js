@@ -1,7 +1,8 @@
-import { API_BASE_URL } from '../utils/constants';
+import { API_BASE_URL } from '../utils/constants.js';
 
 /**
  * HEX HIVE API Service Layer
+ * Centralized HTTP client communicating with FastAPI backend
  */
 class ApiService {
   constructor(baseUrl = API_BASE_URL) {
@@ -9,20 +10,23 @@ class ApiService {
   }
 
   /**
-   * Health status check against GET /api/health
+   * Generic safe fetch with timeout and error resilience
    */
-  async checkHealth() {
+  async request(endpoint, options = {}) {
     const startTime = performance.now();
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => controller.abort(), options.timeout || 4000);
 
-      const response = await fetch(`${this.baseUrl}/health`, {
+      const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          ...(options.headers || {}),
         },
         signal: controller.signal,
+        ...options,
       });
 
       clearTimeout(timeoutId);
@@ -52,10 +56,45 @@ class ApiService {
         ok: false,
         status: 0,
         latencyMs,
-        error: err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Network error'),
+        error: err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Network unreachable'),
         data: null,
       };
     }
+  }
+
+  /**
+   * Health status check: GET /api/health
+   */
+  async checkHealth() {
+    return this.request('/health');
+  }
+
+  /**
+   * System status check: GET /api/system/status
+   */
+  async getSystemStatus() {
+    return this.request('/system/status');
+  }
+
+  /**
+   * Network security summary metrics (Demo data): GET /api/network/summary
+   */
+  async getNetworkSummary() {
+    return this.request('/network/summary');
+  }
+
+  /**
+   * Attack forecast status placeholder: GET /api/forecast/status
+   */
+  async getForecastStatus() {
+    return this.request('/forecast/status');
+  }
+
+  /**
+   * Sample network traffic time-series: GET /api/traffic/sample
+   */
+  async getTrafficSample() {
+    return this.request('/traffic/sample');
   }
 
   getBaseUrl() {
@@ -65,4 +104,3 @@ class ApiService {
 
 export const apiService = new ApiService();
 export default apiService;
-

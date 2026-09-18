@@ -8,12 +8,19 @@ import apiService from '../services/api';
 export const SystemStatusPage = () => {
   const { t } = useLanguage();
   const [backendHealth, setBackendHealth] = useState(null);
+  const [systemData, setSystemData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const probeBackend = useCallback(async () => {
     setIsLoading(true);
-    const result = await apiService.checkHealth();
-    setBackendHealth(result);
+    const [healthRes, sysRes] = await Promise.all([
+      apiService.checkHealth(),
+      apiService.getSystemStatus(),
+    ]);
+    setBackendHealth(healthRes);
+    if (sysRes.ok && sysRes.data) {
+      setSystemData(sysRes.data);
+    }
     setIsLoading(false);
   }, []);
 

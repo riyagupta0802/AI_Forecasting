@@ -29,7 +29,8 @@ export default {
   },
   header: {
     systemOnline: "सिस्टम ऑनलाइन",
-    prototypeBadge: "चरण 2 यूआई प्रोटोटाइप",
+    backendOffline: "बैकएंड ऑफ़लाइन (डेमो मोड)",
+    prototypeBadge: "चरण 3 एपीआई एकीकरण",
     notifications: "सूचनाएँ",
     simulatedAlerts: "3 सिम्युलेटेड अलर्ट",
     profile: "उपयोगकर्ता प्रोफ़ाइल",
@@ -273,5 +274,15 @@ export default {
   emptyState: {
     awaitingTitle: "एमएल पाइपलाइन कनेक्शन की प्रतीक्षा",
     awaitingDesc: "चरण 3 और 4 में मशीन लर्निंग प्रशिक्षण व अनुमान कनेक्ट होने पर यह मॉड्यूल सक्रिय होगा।",
+  },
+  api: {
+    loading: "रीयल-टाइम डेटा लोड हो रहा है...",
+    offlineNotice: "बैकएंड अनुपलब्ध — डेमो इंटरफ़ेस प्रदर्शित",
+    connectedNotice: "लाइव FastAPI बैकएंड कनेक्टेड",
+    fallbackWarning: "बैकएंड सेवा ऑफ़लाइन होने के दौरान स्थानीय प्रोटोटाइप फ़ालबैक डेटा का उपयोग किया जा रहा है।",
+    retryButton: "पुनः प्रयास करें",
+    sampleLoaded: "/api/traffic/sample से लाइव टेलीमेट्री सैंपल लोड किया गया",
+    networkSummaryLoaded: "/api/network/summary से लाइव मेट्रिक्स लोड किए गए",
+    forecastStatusLoaded: "/api/forecast/status से पूर्वानुमान स्थिति लोड की गई",
   },
 };

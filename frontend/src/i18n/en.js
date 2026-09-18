@@ -28,7 +28,8 @@ export default {
   },
   header: {
     systemOnline: "System Online",
-    prototypeBadge: "Phase 2 UI Prototype",
+    backendOffline: "Backend Offline (Demo Mode)",
+    prototypeBadge: "Phase 3 API Integration",
     notifications: "Notifications",
     simulatedAlerts: "3 Simulated Alerts",
     profile: "User Profile",
@@ -272,5 +273,15 @@ export default {
   emptyState: {
     awaitingTitle: "Awaiting ML Pipeline Connection",
     awaitingDesc: "This module will be populated once machine learning training and inference are connected in Phase 3 & 4.",
+  },
+  api: {
+    loading: "Loading live telemetry...",
+    offlineNotice: "Backend unavailable — showing demo interface",
+    connectedNotice: "Live FastAPI backend connected",
+    fallbackWarning: "Using local prototype fallback data while backend service is offline.",
+    retryButton: "Retry Connection",
+    sampleLoaded: "Live telemetry sample loaded from /api/traffic/sample",
+    networkSummaryLoaded: "Live metrics loaded from /api/network/summary",
+    forecastStatusLoaded: "Forecast status loaded from /api/forecast/status",
   },
 };

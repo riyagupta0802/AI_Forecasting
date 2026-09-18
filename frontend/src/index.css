@@ -2093,3 +2093,60 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Offline Resilience Banner */
+.soc-offline-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  animation: fadeIn 0.25s ease;
+}
+
+.soc-offline-text-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.soc-offline-text-group strong {
+  color: var(--accent-amber);
+  font-size: 0.85rem;
+  display: block;
+}
+
+.soc-offline-text-group p {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.btn-offline-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: var(--accent-amber);
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-offline-retry:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+.btn-offline-retry:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

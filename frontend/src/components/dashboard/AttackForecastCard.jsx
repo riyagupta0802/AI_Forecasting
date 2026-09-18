@@ -3,8 +3,17 @@ import { TrendingUp, Clock, ShieldAlert, Cpu, AlertCircle, ArrowRight } from 'lu
 import { useLanguage } from '../../hooks/useLanguage';
 import DemoBadge from '../common/DemoBadge';
 
-export const AttackForecastCard = () => {
+export const AttackForecastCard = ({ forecastData }) => {
   const { t } = useLanguage();
+
+  const currentPattern = forecastData?.current_pattern || t('forecast.currentPatternVal');
+  const possibleNextStage = forecastData?.possible_next_stage || t('forecast.possibleNextStageVal');
+  const confidenceVal = forecastData?.confidence !== null && forecastData?.confidence !== undefined
+    ? `${forecastData.confidence}%`
+    : t('forecast.forecastConfidenceVal');
+  const timeToEscalationVal = forecastData?.time_to_escalation !== null && forecastData?.time_to_escalation !== undefined
+    ? `${forecastData.time_to_escalation}s`
+    : t('forecast.timeToEscalationVal');
 
   const stages = [
     { name: t('forecast.stageRecon'), status: 'active', prob: '84%', active: true },
@@ -31,25 +40,25 @@ export const AttackForecastCard = () => {
       <div className="forecast-metrics-grid">
         <div className="forecast-metric-box">
           <span className="forecast-metric-label">{t('forecast.currentPattern')}</span>
-          <span className="forecast-metric-val">{t('forecast.currentPatternVal')}</span>
+          <span className="forecast-metric-val">{currentPattern}</span>
           <DemoBadge type="sample" size="small" />
         </div>
 
         <div className="forecast-metric-box highlight-box">
           <span className="forecast-metric-label">{t('forecast.possibleNextStage')}</span>
-          <span className="forecast-metric-val text-amber">{t('forecast.possibleNextStageVal')}</span>
+          <span className="forecast-metric-val text-amber">{possibleNextStage}</span>
           <DemoBadge type="awaitingModel" size="small" />
         </div>
 
         <div className="forecast-metric-box">
           <span className="forecast-metric-label">{t('forecast.forecastConfidence')}</span>
-          <span className="forecast-metric-val text-muted">{t('forecast.forecastConfidenceVal')}</span>
+          <span className="forecast-metric-val text-muted">{confidenceVal}</span>
           <DemoBadge type="awaitingModel" size="small" />
         </div>
 
         <div className="forecast-metric-box">
           <span className="forecast-metric-label">{t('forecast.timeToEscalation')}</span>
-          <span className="forecast-metric-val text-cyan">{t('forecast.timeToEscalationVal')}</span>
+          <span className="forecast-metric-val text-cyan">{timeToEscalationVal}</span>
           <DemoBadge type="awaitingModel" size="small" />
         </div>
       </div>

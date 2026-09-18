@@ -3,15 +3,31 @@ import { Activity, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import DemoBadge from '../common/DemoBadge';
 
-export const NetworkTrafficChart = ({ showControls = true }) => {
+export const NetworkTrafficChart = ({ showControls = true, trafficData = null }) => {
   const { t } = useLanguage();
   const [timeRange, setTimeRange] = useState('1h');
 
-  // Baseline normal traffic data points (SVG viewBox: 0 0 600 200)
-  const normalPoints = "0,140 25,135 50,145 75,120 100,125 125,110 150,115 175,130 200,105 225,100 250,110 275,120 300,95 325,105 350,90 375,100 400,115 425,110 450,125 475,120 500,105 525,115 550,110 575,120 600,115";
-  const normalArea = "0,140 25,135 50,145 75,120 100,125 125,110 150,115 175,130 200,105 225,100 250,110 275,120 300,95 325,105 350,90 375,100 400,115 425,110 450,125 475,120 500,105 525,115 550,110 575,120 600,115 600,200 0,200";
+  // If trafficData is provided from API (/api/traffic/sample), dynamically construct points
+  let normalPoints = "0,140 25,135 50,145 75,120 100,125 125,110 150,115 175,130 200,105 225,100 250,110 275,120 300,95 325,105 350,90 375,100 400,115 425,110 450,125 475,120 500,105 525,115 550,110 575,120 600,115";
+  let normalArea = "0,140 25,135 50,145 75,120 100,125 125,110 150,115 175,130 200,105 225,100 250,110 275,120 300,95 325,105 350,90 375,100 400,115 425,110 450,125 475,120 500,105 525,115 550,110 575,120 600,115 600,200 0,200";
 
-  // Suspicious anomaly spikes
+  if (Array.isArray(trafficData) && trafficData.length > 1) {
+    const maxVal = Math.max(...trafficData.map(d => d.traffic), 350);
+    const minVal = Math.min(...trafficData.map(d => d.traffic), 80);
+    const range = Math.max(maxVal - minVal, 1);
+
+    const pts = trafficData.map((d, i) => {
+      const x = Math.round((i / (trafficData.length - 1)) * 600);
+      const normalized = (d.traffic - minVal) / range;
+      const y = Math.round(165 - normalized * 110);
+      return `${x},${y}`;
+    });
+
+    normalPoints = pts.join(' ');
+    normalArea = `${pts.join(' ')} 600,200 0,200`;
+  }
+
+  // Suspicious anomaly spikes (Demo Overlay)
   const anomalyPoints = "0,170 120,165 150,155 200,75 225,35 250,120 320,160 375,55 400,140 480,160 520,60 550,135 600,170";
 
   return (

@@ -1,11 +1,29 @@
-import React from 'react';
-import { Bell, Menu, ShieldCheck, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, Menu, ShieldCheck, ShieldAlert, User } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import LanguageSwitcher from '../LanguageSwitcher';
 import StatusBadge from '../StatusBadge';
+import apiService from '../../services/api';
 
 export const Header = ({ pageTitle, pageSubtitle, onToggleMobile }) => {
   const { t } = useLanguage();
+  const [isBackendOnline, setIsBackendOnline] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkStatus = async () => {
+      const res = await apiService.getSystemStatus();
+      if (isMounted) {
+        setIsBackendOnline(res.ok && res.data?.status === 'online');
+      }
+    };
+    checkStatus();
+    const interval = setInterval(checkStatus, 15000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="dashboard-top-header" role="banner">
@@ -28,12 +46,12 @@ export const Header = ({ pageTitle, pageSubtitle, onToggleMobile }) => {
       </div>
 
       <div className="header-right">
-        {/* System Online Status Badge */}
+        {/* Dynamic System Online Status Badge */}
         <div className="header-system-status">
           <StatusBadge
-            variant="connected"
-            text={t('header.systemOnline')}
-            icon={ShieldCheck}
+            variant={isBackendOnline ? 'connected' : 'disconnected'}
+            text={isBackendOnline ? t('header.systemOnline') : t('header.backendOffline')}
+            icon={isBackendOnline ? ShieldCheck : ShieldAlert}
           />
         </div>
 
