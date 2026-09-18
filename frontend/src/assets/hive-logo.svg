@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="cyberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Hexagon -->
+  <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="url(#cyberGrad)" stroke-width="4" fill="url(#shieldGrad)" />
+  <!-- Inner Hive Nodes -->
+  <polygon points="50,22 75,36 75,64 50,78 25,64 25,36" stroke="#00F0FF" stroke-width="1.5" stroke-dasharray="3,3" fill="none" opacity="0.6" />
+  <!-- Center Core -->
+  <polygon points="50,35 62,42 62,58 50,65 38,58 38,42" fill="url(#cyberGrad)" />
+  <!-- Glowing Center Dot -->
+  <circle cx="50" cy="50" r="4" fill="#FFFFFF" />
+  <!-- Interconnecting Circuit Beams -->
+  <line x1="50" y1="5" x2="50" y2="22" stroke="#00F0FF" stroke-width="2" />
+  <line x1="90" y1="72.5" x2="75" y2="64" stroke="#00F0FF" stroke-width="2" />
+  <line x1="10" y1="72.5" x2="25" y2="64" stroke="#00F0FF" stroke-width="2" />
+</svg>
+
