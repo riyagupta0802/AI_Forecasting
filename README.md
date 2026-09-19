@@ -1,32 +1,18 @@
 # HEX HIVE
 
-**Smart India Hackathon 2026**
-- **Problem Title:** AI based Network Attack Forecasting from Network Traffic Data
-- **Theme:** Blockchain & Cybersecurity
-- **Category:** Software
-- **Problem ID:** SIH26153
+**AI-Based Network Attack Forecasting & Early Warning System**
+
+An intelligent cybersecurity operations platform that analyzes network traffic flow telemetry to detect cyberattack anomalies and forecast multi-stage attack escalation.
 
 ---
 
-## Overview
+## System Flow
 
-**HEX HIVE** is an advanced AI-based cybersecurity early-warning and network attack forecasting system. Unlike traditional Intrusion Detection Systems (IDS) that only trigger reactive alerts when an attack is already in progress, HEX HIVE aims to go beyond detection:
-1. **Analyze** incoming network flow telemetry.
-2. **Detect** suspicious anomalous patterns.
-3. **Classify** underlying attack types across multi-class distributions.
-4. **Predict & Forecast** probable next attack stages.
-5. **Estimate** critical time-to-escalation.
-6. **Correlate** related security events into a coherent "Attack Story".
-7. **Explain** model outputs via Explainable AI (XAI / SHAP).
-8. **Provide** proactive early warnings and actionable mitigation advisories.
-
-### System Flow
-
-$$\text{Network Traffic Data} \longrightarrow \text{Pattern Analysis} \longrightarrow \text{Data Processing} \longrightarrow \text{AI / LSTM Models} \longrightarrow \text{Attack \& Time Prediction} \longrightarrow \text{Early Warning \& Action}$$
+$$\text{Network Traffic} \longrightarrow \text{Data Processing} \longrightarrow \text{Random Forest Attack Detection} \longrightarrow \text{BENIGN / ATTACK} \longrightarrow \text{Dashboard}$$
 
 ---
 
-## Current Status: Phase 4 Completed
+## Current Status: Phase 5 Completed
 
 ### Completed Phases
 
@@ -35,110 +21,95 @@ $$\text{Network Traffic Data} \longrightarrow \text{Pattern Analysis} \longright
 | **Phase 1** | Architecture, FastAPI backend foundation, React+Vite SPA, initial bilingual i18n | ✅ Completed |
 | **Phase 2** | SOC Cybersecurity Dashboard UI, 7 core pages, custom SVG telemetry, bilingual toggle | ✅ Completed |
 | **Phase 3** | FastAPI Backend + Frontend API integration, `/api/system/status`, `/api/traffic/sample` | ✅ Completed |
-| **Phase 4** | Network Traffic Dataset + Data Preprocessing Pipeline, `/api/data/status`, CICIDS2017 | ✅ Completed |
+| **Phase 4** | Network Traffic Dataset + Preprocessing Pipeline, `/api/data/status`, CICIDS2017 | ✅ Completed |
+| **Phase 5** | AI-Based Network Attack Detection, Random Forest Classifier, Real Test Metrics, `/api/ml/*` | ✅ Completed |
 
 ---
 
-## Phase 4: Network Traffic Dataset & Data Processing
+## Phase 5: AI-Based Network Attack Detection
 
-Phase 4 establishes the automated dataset ingestion, cleaning, and preprocessing pipeline for HEX HIVE:
+Phase 5 introduces active machine learning classification into HEX HIVE using a trained **RandomForestClassifier** to classify incoming network flow telemetry into **BENIGN** (normal) vs. **ATTACK** (malicious/suspicious).
+
+### Architecture & Components
 
 ```
 ml/
 ├── data/
-│   ├── raw/                        # Raw PCAP dumps / large source datasets (not committed)
-│   │   └── README.md
-│   ├── sample/                     # Lightweight representative intrusion benchmark
-│   │   └── cicids2017_sample.csv   # 500 records across BENIGN, DDoS, PortScan, Bot (79 flow columns)
-│   └── processed/                  # Cleaned, scaled, ML-ready feature matrices
-│       ├── train_features.csv      # 500 samples x 78 scaled continuous flow features
-│       ├── train_labels.csv        # Encoded target attack classification labels (0..3)
-│       └── preprocessing_meta.json # Scaler parameters, feature list, and class encodings
-└── preprocessing/
-    ├── data_loader.py              # Schema validation, path safety, column whitespace stripping
-    ├── cleaner.py                  # Deduplication, inf replacement, NaN median imputation, X/y split
-    ├── preprocessor.py             # Scikit-learn StandardScaler, LabelEncoder & JSON exporter
-    └── preprocess.py               # Reproducible end-to-end CLI execution runner
+│   ├── sample/
+│   │   └── cicids2017_sample.csv   # Benchmark network flow data
+│   └── processed/
+│       ├── train_features.csv      # Scaled flow features (500 samples x 78 features)
+│       ├── train_labels.csv        # Multi-class and binary mapped targets
+│       └── preprocessing_meta.json # Scaler parameters and feature names
+├── models/
+│   ├── attack_classifier.joblib    # Serialized trained RandomForestClassifier
+│   └── model_metrics.json          # Real test-set evaluation metrics & confusion matrix
+├── predictions/
+│   └── predict.py                  # High-performance AttackPredictor runtime engine
+└── training/
+    └── train.py                    # Stratified train/test split, training & evaluation runner
 ```
 
-### Dataset Characteristics (CICIDS2017)
-- **Benchmark:** Canadian Institute for Cybersecurity CICIDS2017 flow data format.
-- **Traffic Classes:**
-  - `BENIGN`: Normal web, DNS, and encrypted traffic flows.
-  - `DDoS`: High-volume packet floods with short inter-arrival times.
-  - `PortScan`: Rapid sequential probing across destination ports with SYN flags.
-  - `Bot`: Periodic command-and-control beaconing patterns.
-- **Data Quality Corrections Handled:**
-  - Standard CICIDS2017 column name whitespace stripping (`df.columns.str.strip()`).
-  - Correction of infinite values (`np.inf` / `-np.inf` in `Flow Bytes/s` due to zero duration).
-  - Missing value imputation using feature column medians (outlier-resilient).
-  - Feature matrix ($X$) and target vector ($y$) separation without data leakage.
+### Model Performance Metrics (Evaluated on Isolated Test Set, N=100)
 
-### Running the Preprocessing Pipeline
+All performance metrics are calculated on an isolated 20% test split ($N=100$) with a fixed seed (`random_state=42`) using real network flow data:
 
-To execute the data processing pipeline and generate ML-ready artifacts:
+| Metric | Score | Note |
+|---|---|---|
+| **Accuracy** | **99.00%** | Overall correct classifications |
+| **Precision** | **100.00%** | Zero false alarms ($FP=0$) |
+| **Recall** | **97.62%** | 41 out of 42 attack vectors detected |
+| **F1 Score** | **98.80%** | Harmonic mean of precision & recall |
+| **ROC-AUC** | **0.9988** | High discriminative capability |
+
+#### Confusion Matrix
+- **True Negatives ($TN$):** `58` (Normal BENIGN traffic correctly identified)
+- **False Positives ($FP$):** `0` (Zero false alarms on normal traffic)
+- **False Negatives ($FN$):** `1` (Missed intrusion vector)
+- **True Positives ($TP$):** `41` (Attacks correctly flagged)
+
+### Running Training & Prediction
 
 ```powershell
-# From project root with virtual environment activated:
-python ml/preprocessing/preprocess.py
-```
+# 1. Train and evaluate the Random Forest model:
+python ml/training/train.py
 
-Expected output:
-```text
-============================================================
-HEX HIVE — Phase 4 Network Traffic Preprocessing Pipeline
-============================================================
-Input Dataset:  .../ml/data/sample/cicids2017_sample.csv
-Output Directory: .../ml/data/processed
-------------------------------------------------------------
-Initial Records:        500
-Duplicates Removed:     0
-Infinite Values Fixed:  2
-Missing Values Imputed: 4
-Final Retained Records: 500
-Total Clean Features:   78
-------------------------------------------------------------
-Saving processed data artifacts:
-  [OK] Features saved to: train_features.csv (500 rows, 78 cols)
-  [OK] Labels saved to:   train_labels.csv (500 rows)
-  [OK] Metadata saved to: preprocessing_meta.json
-------------------------------------------------------------
-Detected Classes & Encoding:
-  - BENIGN       (Code: 0) -> 290 instances
-  - Bot          (Code: 1) -> 40 instances
-  - DDoS         (Code: 2) -> 110 instances
-  - PortScan     (Code: 3) -> 60 instances
-============================================================
-Phase 4 Preprocessing Pipeline COMPLETED SUCCESSFULLY!
-============================================================
+# 2. Run standalone inference verification:
+python ml/predictions/predict.py
 ```
 
 ---
 
 ## Backend API Endpoints
 
-The FastAPI backend exposes the following modular endpoints under `/api`:
+The FastAPI backend provides modular endpoints under `/api`:
 
 | Method | Endpoint | Description | Phase |
 |---|---|---|---|
-| `GET` | `/api/health` | Service health status check | Phase 1 |
-| `GET` | `/api/system/status` | System components runtime status | Phase 3 |
-| `GET` | `/api/network/summary` | Simulated network telemetry summary metrics | Phase 3 |
-| `GET` | `/api/forecast/status` | Attack forecasting engine status placeholder | Phase 3 |
-| `GET` | `/api/traffic/sample` | Sample network traffic time-series data points | Phase 3 |
-| `GET` | `/api/data/status` | Dynamic dataset inventory & preprocessing pipeline state | **Phase 4** |
+| `GET` | `/api/health` | Health check (`status: "ok"`) | Phase 1 |
+| `GET` | `/api/system/status` | System component status (`ml_model: "loaded"`) | Phase 3/5 |
+| `GET` | `/api/network/summary` | Simulated telemetry summary metrics | Phase 3 |
+| `GET` | `/api/forecast/status` | Attack forecasting placeholder (*Awaiting Model*) | Phase 3 |
+| `GET` | `/api/traffic/sample` | Sample network traffic time-series points | Phase 3 |
+| `GET` | `/api/data/status` | Dynamic dataset inventory & preprocessing state | Phase 4 |
+| `GET` | `/api/ml/status` | Random Forest model availability & feature metadata | **Phase 5** |
+| `GET` | `/api/ml/metrics` | Real test-set evaluation metrics & confusion matrix | **Phase 5** |
+| `POST` | `/api/ml/predict` | Real-time binary attack detection inference | **Phase 5** |
 
-### Example Response: `GET /api/data/status`
+### Example Response: `POST /api/ml/predict`
 
 ```json
 {
-  "status": "ready",
-  "dataset": "CICIDS2017",
-  "mode": "demo",
-  "records_available": 500,
-  "preprocessing": "ready",
-  "processed_records": 500,
-  "classes_detected": ["BENIGN", "Bot", "DDoS", "PortScan"]
+  "prediction": "ATTACK",
+  "is_attack": true,
+  "confidence": 100.0,
+  "probabilities": {
+    "BENIGN": 0.0,
+    "ATTACK": 1.0
+  },
+  "inference_latency_ms": 1.85,
+  "model_type": "Random Forest",
+  "features_evaluated": 78
 }
 ```
 
@@ -200,13 +171,12 @@ The FastAPI backend exposes the following modular endpoints under `/api`:
 
 4. Open your browser at `http://127.0.0.1:5173`.
    - Toggle language between **English** and **हिन्दी (Hindi)** with 100% dictionary parity.
-   - Navigate to the **Network Traffic** view to inspect the live **Dataset & Preprocessing Status** card (`CICIDS2017`, `500` records, `78` clean features).
+   - Inspect the **AI Attack Detection** card to review real evaluated model metrics and test live classifications on benign vs. attack traffic flows.
 
 ---
 
 ## Roadmap
 
-- **Phase 5:** Attack Detection & Classification ML Models (RandomForest / XGBoost baseline).
-- **Phase 6:** Temporal Sequence Modeling (LSTM / GRU for next-stage forecasting and time-to-escalation regression).
-- **Phase 7:** Attack Story Correlation & Explainable AI (SHAP / XAI).
+- **Phase 6:** Temporal Sequence Modeling (LSTM / GRU for next attack stage forecasting and time-to-escalation regression).
+- **Phase 7:** Attack Story Correlation & Explainable AI (SHAP feature attribution).
 - **Phase 8:** Real-time Packet Capture Ingestion & Production Security Hardening.

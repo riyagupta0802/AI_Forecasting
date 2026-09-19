@@ -45,7 +45,7 @@ export const StarterDashboard = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-tag-wrap">
-          <StatusBadge variant="phase" text={t('brand.hackathonTag')} icon={Zap} />
+          <StatusBadge variant="phase" text={t('brand.platformTag')} icon={Zap} />
           <StatusBadge variant="connected" text={t('status.operational')} icon={ShieldCheck} />
         </div>
 

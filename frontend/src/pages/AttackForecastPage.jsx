@@ -30,25 +30,25 @@ export const AttackForecastPage = () => {
           <div className="forecast-spec-box">
             <span className="spec-label">Temporal Architecture</span>
             <span className="spec-val">Bidirectional LSTM + Temporal Attention</span>
-            <span className="spec-sub">Sequence window: 30 time steps (Phase 3)</span>
+            <span className="spec-sub">Sequence window: 30 time steps (Future Phase)</span>
           </div>
 
           <div className="forecast-spec-box">
             <span className="spec-label">Multi-Class Classifier</span>
             <span className="spec-val">XGBoost Ensemble</span>
-            <span className="spec-sub">CICIDS benchmark classes (Phase 3)</span>
+            <span className="spec-sub">CICIDS benchmark classes (Future Phase)</span>
           </div>
 
           <div className="forecast-spec-box">
             <span className="spec-label">Explainability</span>
             <span className="spec-val">TreeSHAP & Flow Attribution</span>
-            <span className="spec-sub">Feature contribution scores (Phase 4)</span>
+            <span className="spec-sub">Feature contribution scores (Future Phase)</span>
           </div>
 
           <div className="forecast-spec-box">
             <span className="spec-label">Escalation Window</span>
             <span className="spec-val">{t('forecast.timeToEscalationVal')}</span>
-            <span className="spec-sub">Regression target (Phase 4)</span>
+            <span className="spec-sub">Regression target (Future Phase)</span>
           </div>
         </div>
 

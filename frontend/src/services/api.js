@@ -104,6 +104,33 @@ class ApiService {
     return this.request('/data/status');
   }
 
+  /**
+   * Machine Learning classifier status (Phase 5): GET /api/ml/status
+   */
+  async getMlStatus() {
+    return this.request('/ml/status');
+  }
+
+  /**
+   * Real evaluated ML test-set metrics (Phase 5): GET /api/ml/metrics
+   */
+  async getMlMetrics() {
+    return this.request('/ml/metrics');
+  }
+
+  /**
+   * Real Random Forest attack prediction (Phase 5): POST /api/ml/predict
+   */
+  async predictAttack(payload = {}) {
+    return this.request('/ml/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }

@@ -3,6 +3,7 @@ import { Activity, Globe, ShieldAlert, AlertTriangle, RefreshCw, CheckCircle2 } 
 import { useLanguage } from '../hooks/useLanguage';
 import SummaryCard from '../components/dashboard/SummaryCard';
 import SecurityPipeline from '../components/dashboard/SecurityPipeline';
+import AttackDetectionCard from '../components/dashboard/AttackDetectionCard';
 import AttackForecastCard from '../components/dashboard/AttackForecastCard';
 import NetworkTrafficChart from '../components/dashboard/NetworkTrafficChart';
 import RiskOverviewCard from '../components/dashboard/RiskOverviewCard';
@@ -135,9 +136,14 @@ export const DashboardPage = () => {
         />
       </section>
 
-      {/* Security Pipeline Flow (SIH Concept Anchor) */}
+      {/* Security Pipeline Flow */}
       <section className="pipeline-section-wrapper">
         <SecurityPipeline />
+      </section>
+
+      {/* AI Attack Detection - Random Forest Classifier (Phase 5) */}
+      <section className="soc-full-width-section">
+        <AttackDetectionCard />
       </section>
 
       {/* Attack Forecast Major Card (wired to backend /api/forecast/status) & Risk Overview */}
