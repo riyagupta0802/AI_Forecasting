@@ -9,7 +9,7 @@
 
 ## Overview
 
-**HEX HIVE** is an advanced AI-based cybersecurity early-warning and network attack forecasting system. Unlike traditional Intrusion Detection Systems (IDS) that only trigger reactive alerts when an attack is already in progress, HEX HIVE aims to go beyond detection:
+**NETORACLE** is an advanced AI-based cybersecurity early-warning and network attack forecasting system. Unlike traditional Intrusion Detection Systems (IDS) that only trigger reactive alerts when an attack is already in progress, HEX HIVE aims to go beyond detection:
 1. **Analyze** incoming network flow telemetry.
 2. **Detect** suspicious anomalous patterns.
 3. **Classify** underlying attack types across multi-class distributions.
