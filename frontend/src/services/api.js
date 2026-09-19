@@ -97,6 +97,13 @@ class ApiService {
     return this.request('/traffic/sample');
   }
 
+  /**
+   * Dataset and preprocessing pipeline status (Phase 4): GET /api/data/status
+   */
+  async getDataStatus() {
+    return this.request('/data/status');
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }

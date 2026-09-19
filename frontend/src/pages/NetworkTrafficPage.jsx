@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity, ShieldCheck, AlertTriangle, ArrowUpDown, Filter } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import NetworkTrafficChart from '../components/dashboard/NetworkTrafficChart';
+import DatasetStatusCard from '../components/dashboard/DatasetStatusCard';
 import DemoBadge from '../components/common/DemoBadge';
 
 export const NetworkTrafficPage = () => {
@@ -74,6 +75,9 @@ export const NetworkTrafficPage = () => {
 
   return (
     <div className="soc-page network-traffic-page">
+      {/* Benchmark Dataset & Preprocessing Pipeline Status (Phase 4) */}
+      <DatasetStatusCard />
+
       {/* Primary Telemetry Chart with Demo Labels */}
       <NetworkTrafficChart showControls={true} />
 

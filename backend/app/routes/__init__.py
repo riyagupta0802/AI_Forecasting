@@ -6,6 +6,7 @@ Mounts modular endpoint routers under /api:
 - GET /api/network/summary  (Network security summary metrics - Demo)
 - GET /api/forecast/status  (Attack forecasting status placeholder)
 - GET /api/traffic/sample   (Sample network traffic dataset - Demo)
+- GET /api/data/status      (Dataset & preprocessing status - Phase 4)
 """
 
 from fastapi import APIRouter
@@ -14,14 +15,17 @@ from app.routes.system import router as system_router
 from app.routes.network import router as network_router
 from app.routes.forecast import router as forecast_router
 from app.routes.traffic import router as traffic_router
+from app.routes.data import router as data_router
 
 api_router = APIRouter()
 
-# Phase 1 & Phase 3 active routes
+# Phase 1, Phase 3 & Phase 4 active routes
 api_router.include_router(health_router)
 api_router.include_router(system_router)
 api_router.include_router(network_router)
 api_router.include_router(forecast_router)
 api_router.include_router(traffic_router)
+api_router.include_router(data_router)
 
 __all__ = ["api_router"]
+
