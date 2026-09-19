@@ -1,10 +1,10 @@
 # HEX HIVE
 
-**Smart India Hackathon 2026**
+**HackShastra**
 - **Problem Title:** AI based Network Attack Forecasting from Network Traffic Data
 - **Theme:** Blockchain & Cybersecurity
 - **Category:** Software
-- **Problem ID:** SIH26153
+-
 
 ---
 
