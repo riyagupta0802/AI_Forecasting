@@ -1,10 +1,9 @@
-# HEX HIVE
+# NETORACLE
 
 **HackShastra**
 - **Problem Title:** AI based Network Attack Forecasting from Network Traffic Data
 - **Theme:** Blockchain & Cybersecurity
 - **Category:** Software
--
 
 ---
 
