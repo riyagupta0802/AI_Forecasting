@@ -178,6 +178,40 @@ class ApiService {
     });
   }
 
+  /**
+   * Attack Story Engine status & inventory (Phase 8): GET /api/attack-story/status
+   */
+  async getAttackStoryStatus() {
+    return this.request('/attack-story/status');
+  }
+
+  /**
+   * Filtered Chronological Attack Story & Timeline (Phase 8): GET /api/attack-story
+   */
+  async getAttackStory(params = {}) {
+    const query = new URLSearchParams();
+    if (params.category) query.append('category', params.category);
+    if (params.severity) query.append('severity', params.severity);
+    if (params.context) query.append('context', params.context);
+    if (params.limit) query.append('limit', params.limit);
+    const queryString = query.toString();
+    const endpoint = queryString ? `/attack-story?${queryString}` : '/attack-story';
+    return this.request(endpoint);
+  }
+
+  /**
+   * On-demand Context Attack Story Generation (Phase 8): POST /api/attack-story/generate
+   */
+  async generateAttackStory(payload = {}) {
+    return this.request('/attack-story/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }

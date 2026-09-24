@@ -55,10 +55,30 @@ Phase 6 Cyber Kill Chain Transition Forecaster (Empirical Markov Transition Matr
             ↓
 Phase 7 Time-to-Escalation Engine (Telemetry Velocity Index + RandomForestRegressor)
             ↓
-Calibrated Escalation Window (seconds/minutes), Threat Risk Level & Velocity Metric
+Phase 8 Real Attack Story Engine (Event Correlation, Chronological Timeline & 5 SOC Answers)
             ↓
-HEX HIVE SOC Dashboard (AttackForecastCard & AttackForecastPage)
+HEX HIVE SOC Dashboard (AttackStoryPreview) & Dedicated Page (AttackStoryPage)
 ```
+
+---
+
+## Phase 8: Real Attack Story & Event Correlation
+
+### The 5 Core SOC Incident Questions Answered
+1. **"What happened?"** — Initial detected network anomaly or operational baseline stability with real destination port targets.
+2. **"What happened next?"** — Correlated multi-stage progression across destination ports and services.
+3. **"What is happening now?"** — Current active threat posture classified by Phase 5 binary detection and stage identification.
+4. **"What may happen next?"** — Machine learning Kill Chain progression forecasted by Phase 6 Markov/RF transition dynamics.
+5. **"How is the threat escalating?"** — Calibrated time window until higher-severity escalation estimated by Phase 7 regressor.
+
+### Correlation & Timeline Architecture
+- **Normalized Events (`ml/attack_story/events.py`):** 500 flow records from `cicids2017_sample.csv` normalized into `NetworkSecurityEvent` dataclasses with real flow durations, packet counts, byte volumes, destination ports, TCP flags (`SYN`, `ACK`), and accumulated relative time offsets (`relative_time_s`).
+- **Cluster Correlation (`ml/attack_story/correlation.py`):** `EventCorrelator` groups events into `CorrelatedAttackCluster` structures based on empirical intrusion category, service port groups (e.g. multi-port sweep for `PortScan`, IRC C2 on 6667 / Metasploit on 4444 for `Bot`, HTTP/HTTPS saturation for `DDoS`), and sequential continuity.
+- **Chronological Timeline (`ml/attack_story/timeline.py`):** `ChronologicalTimelineBuilder` synthesizes `TimelineNode` milestones linking historical clusters, the active threat state, the Phase 6 forecast node, and the Phase 7 escalation window node.
+- **Narrative Synthesis (`ml/attack_story/story.py`):** `AttackStoryEngine` composes the grounded SOC security incident narrative. Phrasing strictly adheres to evidence-grounded terminology (`observed`, `detected`, `correlated`, `forecasted`, `estimated`).
+
+### Temporal Data Scope & Disclosed Limitations
+The Attack Story engine operates exclusively on genuine flow telemetry from the 500-sample CICIDS2017 aggregate dataset. Temporal sequence offsets are accumulated deterministically from microsecond durations (`relative_time_s`). No synthetic wall-clock dates, fake IP addresses, or ungrounded attack stages are fabricated.
 
 ---
 
@@ -94,6 +114,11 @@ Escalation is defined as the transition from a lower-severity pre-attack conditi
 ---
 
 ## API Endpoints
+
+### Phase 8 Attack Story Endpoints
+- `GET /api/attack-story/status` — Returns attack story readiness, ingested flow event count, cluster count, active posture, and limitations.
+- `GET /api/attack-story` — Returns correlated event timeline, 5-question SOC incident narrative, cluster breakdowns, and flow telemetry with optional filters (`category`, `severity`, `context`, `limit`).
+- `POST /api/attack-story/generate` — Generates an on-demand context-driven incident narrative and timeline for a specified threat context.
 
 ### Phase 7 Escalation Endpoints
 - `GET /api/escalation/status` — Returns active threat escalation status, estimated seconds/minutes, formatted window, risk level, velocity index, and limitations.

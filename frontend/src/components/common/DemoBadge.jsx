@@ -14,6 +14,8 @@ export const DemoBadge = ({ type = 'demo', size = 'normal', className = '' }) =>
     awaitingModel: t('badges.awaitingModel'),
     conceptPreview: t('badges.conceptPreview'),
     prototype: t('badges.prototype'),
+    live: t('badges.live'),
+    verified: t('badges.verified'),
   };
 
   const styleClass = {
@@ -23,6 +25,8 @@ export const DemoBadge = ({ type = 'demo', size = 'normal', className = '' }) =>
     awaitingModel: 'demo-badge-purple',
     conceptPreview: 'demo-badge-indigo',
     prototype: 'demo-badge-emerald',
+    live: 'demo-badge-emerald',
+    verified: 'demo-badge-cyan',
   }[type] || 'demo-badge-cyan';
 
   return (

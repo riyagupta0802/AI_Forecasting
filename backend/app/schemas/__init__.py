@@ -13,6 +13,15 @@ from app.schemas.escalation import (
     EscalationPredictRequest,
     EscalationPredictResponse,
 )
+from app.schemas.attack_story import (
+    AttackStoryStatusResponse,
+    AttackStoryResponse,
+    AttackStoryGenerateRequest,
+    EventDetailSchema,
+    ClusterDetailSchema,
+    TimelineNodeSchema,
+    NarrativeSchema,
+)
 from app.schemas.traffic import TrafficDataPoint, TrafficSampleResponse
 from app.schemas.data import DataStatusResponse
 from app.schemas.ml import (
@@ -35,6 +44,13 @@ __all__ = [
     "EscalationMetricsResponse",
     "EscalationPredictRequest",
     "EscalationPredictResponse",
+    "AttackStoryStatusResponse",
+    "AttackStoryResponse",
+    "AttackStoryGenerateRequest",
+    "EventDetailSchema",
+    "ClusterDetailSchema",
+    "TimelineNodeSchema",
+    "NarrativeSchema",
     "TrafficDataPoint",
     "TrafficSampleResponse",
     "DataStatusResponse",

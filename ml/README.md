@@ -35,12 +35,18 @@ ml/
 │   ├── model.py                        # AttackForecastingModel & Kill Chain transitions
 │   ├── train.py                        # Phase 6 Multi-Class training script
 │   └── predict.py                      # AttackForecaster end-to-end inference engine
-└── escalation/
+├── escalation/
+│   ├── __init__.py                     # Module exports
+│   ├── preprocessing.py                # Temporal velocity feature extraction
+│   ├── model.py                        # TimeToEscalationEngine & risk thresholds
+│   ├── train.py                        # Phase 7 Supervised regression training script
+│   └── predict.py                      # EscalationPredictor end-to-end inference engine
+└── attack_story/
     ├── __init__.py                     # Module exports
-    ├── preprocessing.py                # Temporal velocity feature extraction
-    ├── model.py                        # TimeToEscalationEngine & risk thresholds
-    ├── train.py                        # Phase 7 Supervised regression training script
-    └── predict.py                      # EscalationPredictor end-to-end inference engine
+    ├── events.py                       # NetworkSecurityEvent schema & dataset normalizer
+    ├── correlation.py                  # EventCorrelator & CorrelatedAttackCluster
+    ├── timeline.py                     # ChronologicalTimelineBuilder & TimelineNode
+    └── story.py                        # AttackStoryEngine (5 SOC questions synthesis)
 ```
 
 ## Machine Learning Capabilities
@@ -66,3 +72,18 @@ ml/
   - `Bot` $\to$ C2 staging to botnet flood: ~45s to 180s (velocity-modulated).
   - `DDoS` $\to$ 0s (Already at peak impact).
   - `BENIGN` $\to$ Not escalating (Baseline stable).
+
+### Phase 8 — Real Attack Story & Event Correlation
+- **Pipeline:** Flow Telemetry $\to$ Detection $\to$ Cluster Correlation $\to$ Kill Chain Timeline $\to$ Phase 6 Forecast $\to$ Phase 7 Escalation $\to$ 5 SOC Answers.
+- **Data Grounding:** Real CICIDS2017 aggregate flow records (`cicids2017_sample.csv`). Relative timeline offsets derived deterministically from microsecond `Flow Duration` accumulations (`relative_time_s`) without synthetic dates or fabricated IP addresses.
+- **Correlation Logic:**
+  - `PortScan`: Multi-port sweep pattern across dynamic high ports (e.g. 22608, 10086, 17019, 30946).
+  - `Bot`: Port 6667 (Standard IRC C2), Port 4444 (Metasploit default listener), Ports 8080/8000.
+  - `DDoS`: Volumetric packet saturation targeting web server ports 80/443.
+  - `BENIGN`: Standard baseline traffic on ports 80, 443, 8080, 22, 53.
+- **Core Narrative Questions Answered:**
+  1. *What happened?* (Initial detected anomaly or baseline stability)
+  2. *What happened next?* (Correlated event progression across destination ports)
+  3. *What is happening now?* (Current Phase 5 detected threat)
+  4. *What may happen next?* (Phase 6 Kill Chain forecast transition)
+  5. *How is the threat escalating?* (Phase 7 velocity-calibrated escalation window)
