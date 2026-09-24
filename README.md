@@ -13,7 +13,7 @@ An intelligent cybersecurity operations platform that analyzes network traffic f
 
 ## System Flow
 
-**Network Traffic Data → Preprocessing → Attack Detection → Stage Forecasting → Time-to-Escalation → Early Warning & Action**
+**Network Traffic Data → Preprocessing → Attack Detection → Stage Forecasting → Time-to-Escalation → Attack Story → Early Warning → Recommendation Engine → HEX HIVE Dashboard**
 
 NETORACLE is an advanced AI-based cybersecurity early-warning and network attack forecasting system. Unlike traditional Intrusion Detection Systems (IDS) that mainly provide reactive alerts, NETORACLE aims to go beyond detection:
 
@@ -22,11 +22,13 @@ NETORACLE is an advanced AI-based cybersecurity early-warning and network attack
 3. **Classify** underlying multi-stage attack types (`BENIGN`, `PortScan`, `Bot`, `DDoS`).
 4. **Predict & Forecast** probable next attack stages using Cyber Kill Chain progression dynamics.
 5. **Estimate Time-to-Escalation** using real-time flow velocity calibration and supervised regression.
-6. **Provide** calibrated threat risk levels (`LOW`, `MODERATE`, `HIGH`, `CRITICAL`) and actionable early advisories.
+6. **Synthesize Attack Story** answering the 5 core SOC incident questions with correlated timelines.
+7. **Generate Early Warnings** with multi-source evidence grounding and deduplicated alert triage.
+8. **Provide Defensive Recommendations** with transparent rules, evidence trails, and operator lifecycle states.
 
 ---
 
-## Current Status: Phase 7 Completed
+## Current Status: Phase 10 Completed
 
 | Phase | Description | Status |
 |---|---|---|
@@ -37,10 +39,13 @@ NETORACLE is an advanced AI-based cybersecurity early-warning and network attack
 | **Phase 5** | AI-Based Network Attack Detection using Random Forest (99% Accuracy) | ✅ Completed |
 | **Phase 6** | Real Attack Forecasting using Multi-Class Stage Classifier + Transition Dynamics (98% Accuracy) | ✅ Completed |
 | **Phase 7** | Real Time-to-Escalation using Velocity-Calibrated Regression (MAE: 8.38s, R²: 0.9566) | ✅ Completed |
+| **Phase 8** | Real Attack Story & Event Correlation (5 SOC Questions, Timelines, Clustering) | ✅ Completed |
+| **Phase 9** | Real Early Warning Engine (Multi-Source Evidence, Deterministic Decision Matrix) | ✅ Completed |
+| **Phase 10** | Real Security Recommendation Engine (Contextual Defensive Actions, Lifecycle Tracking) | ✅ Completed |
 
 ---
 
-## Phase 6 & Phase 7 End-to-End Pipeline
+## End-to-End Security Intelligence Pipeline
 
 ```text
 Network Traffic Flow Telemetry
@@ -59,8 +64,59 @@ Phase 8 Real Attack Story Engine (Event Correlation, Chronological Timeline & 5 
             ↓
 Phase 9 Real Early Warning Engine (Multi-Source Evidence, Decision Matrix & Alert Triage)
             ↓
-HEX HIVE SOC Dashboard (EarlyWarningCard) & Dedicated Triage Page (EarlyWarningsPage)
+Phase 10 Real Security Recommendation Engine (Defensive Actions, Evidence Trails & Lifecycle)
+            ↓
+HEX HIVE SOC Dashboard (RecommendedActionsCard) & Dedicated Triage Page (RecommendationsPage)
 ```
+
+
+---
+
+## Phase 10: Real Security Recommendation Engine
+
+### Defensive Purpose & Non-Automated Scope
+The Security Recommendation Engine provides actionable, context-tailored **defensive guidance** for security operations center (SOC) analysts based on verifiable evidence from Phases 5 through 9.
+- **Strictly Advisory:** Recommendations suggest operator actions (e.g., *"Consider reviewing firewall rules for scanned ports"*, *"Security operator should verify process telemetry"*).
+- **Zero Automated Disruption:** The system does not execute automated firewall drops, host shutdowns, or network changes without explicit operator confirmation.
+- **Non-Offensive Guarantee:** The engine strictly forbids offensive exploit instructions, malware payloads, or destructive commands.
+
+### Distinction Between Telemetry, Models, Warnings & Recommendations
+1. **OBSERVED DATA:** Normalized flow records from CICIDS2017 (flow duration, inter-arrival times, packet sizes, destination ports, TCP flags).
+2. **MODEL OUTPUT:** Statistical machine learning inferences (Phase 5 binary detection, Phase 6 multi-stage classification, Phase 7 regression).
+3. **DERIVED WARNING:** Deterministic Phase 9 security alerts classifying threat severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`).
+4. **RECOMMENDATION:** Tailored Phase 10 defensive actions with underlying rationale, target infrastructure asset, and supporting evidence trail.
+
+### Decision Rules & Defensive Actions Matrix
+- **CRITICAL Priority (Volumetric Disruption / Imminent Outage $\le 60\text{s}$):**
+  - *Contain:* Engage upstream rate-limiting and perimeter traffic scrubbing targeting impacted destination ports.
+  - *Escalate:* Initiate SOC incident bridge and notify Network Operations for ISP-level mitigation.
+  - *Preserve:* Archive packet headers and NetFlow telemetry to secure storage before circular buffer overwrite.
+- **HIGH Priority (C2 Beaconing / Botnet Staging $61\text{s} - 180\text{s}$):**
+  - *Isolate:* Consider host network quarantine on an isolated VLAN after verifying suspicious C2 beaconing.
+  - *Investigate:* Inspect running processes, active sockets, and authentication activity on the host.
+  - *Review:* Review egress firewall rules to block unauthorized outbound socket connections to foreign IPs.
+- **MEDIUM Priority (Reconnaissance Probing / Moderate Escalation $181\text{s} - 360\text{s}$):**
+  - *Review:* Verify ingress firewall access control lists for scanned ports and evaluate source CIDR drop rules.
+  - *Monitor:* Increase NetFlow export frequency and verbose TCP flag logging on edge ingress interfaces.
+  - *Investigate:* Audit targeted internal service daemons to verify patches and close unnecessary ports.
+- **LOW Priority (Normal Baseline Operational Traffic):**
+  - *Monitor:* Continue routine continuous telemetry monitoring; no immediate containment required.
+  - *Review:* Perform scheduled routine audits of firewall rules and model drift baselines.
+
+### Verifiable 5-Source Evidence Trail
+Every recommendation generated provides explicit attribution across the entire security pipeline:
+1. `Phase 5 Detection:` Binary classification (`ATTACK` vs `BENIGN`) with Random Forest confidence.
+2. `Phase 6 Forecasting:` Current attack stage and projected next stage with transition probability.
+3. `Phase 7 Escalation:` Estimated escalation countdown in seconds and telemetry velocity factor.
+4. `Phase 8 Attack Story:` Correlated incident cluster identifier and monitored destination ports.
+5. `Phase 9 Early Warning:` Active warning severity level, alert type, and fingerprint ID.
+
+### Deduplication & Operator Lifecycle Management
+- **Deduplication:** Recommendations compute a cryptographic MD5 fingerprint based on rule ID, target asset, priority tier, and attack stage to eliminate redundant advisories.
+- **Lifecycle Tracking:**
+  - `PENDING`: Newly evaluated advisory awaiting operator review.
+  - `ACKNOWLEDGED`: Operator has reviewed and accepted the defensive action item.
+  - `RESOLVED`: Threat condition has ceased (telemetry returned to `BENIGN` baseline) or operator completed mitigation.
 
 ---
 
@@ -151,6 +207,13 @@ Escalation is defined as the transition from a lower-severity pre-attack conditi
 ---
 
 ## API Endpoints
+
+### Phase 10 Security Recommendations Endpoints
+- `GET /api/recommendations/status` — Returns recommendation engine readiness, active threat posture, summary counts (total, pending, acknowledged, resolved), and limitations.
+- `GET /api/recommendations` — Returns active evidence-grounded defensive recommendations with optional filters (`priority`, `category`, `status`, `context`, `limit`).
+- `POST /api/recommendations/generate` — Evaluates telemetry context and returns defensive recommendations on demand.
+- `PATCH /api/recommendations/{id}/status` — Updates operator lifecycle status (`PENDING`, `ACKNOWLEDGED`, `RESOLVED`) with full audit timestamps.
+- `POST /api/recommendations/{id}/status` — POST alias for operator status update.
 
 ### Phase 9 Early Warning Endpoints
 - `GET /api/warnings/status` — Returns warning engine readiness, active warning status, history count, and limitations.

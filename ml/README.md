@@ -47,13 +47,20 @@ ml/
 │   ├── correlation.py                  # EventCorrelator & CorrelatedAttackCluster
 │   ├── timeline.py                     # ChronologicalTimelineBuilder & TimelineNode
 │   └── story.py                        # AttackStoryEngine (5 SOC questions synthesis)
-└── warning/
+├── warning/
+│   ├── __init__.py                     # Module exports
+│   ├── models.py                       # EarlyWarning & EvidenceItem dataclasses
+│   ├── rules.py                        # Deterministic severity matrix & decision logic
+│   ├── formatter.py                    # Title, message, and evidence text synthesizers
+│   └── engine.py                       # EarlyWarningEngine (Lifecycle & deduplication)
+└── recommendations/
     ├── __init__.py                     # Module exports
-    ├── models.py                       # EarlyWarning & EvidenceItem dataclasses
-    ├── rules.py                        # Deterministic severity matrix & decision logic
-    ├── formatter.py                    # Title, message, and evidence text synthesizers
-    └── engine.py                       # EarlyWarningEngine (Lifecycle & deduplication)
+    ├── models.py                       # SecurityRecommendation & summary dataclasses
+    ├── rules.py                        # Deterministic defensive mitigation rule matrix
+    ├── formatter.py                    # 5-source verifiable evidence trail compiler
+    └── engine.py                       # RecommendationEngine (Lifecycle & deduplication)
 ```
+
 
 ## Machine Learning Capabilities
 
@@ -104,4 +111,19 @@ ml/
   - `INFO`: Normal baseline operational telemetry (`BENIGN`), zero active threats.
 - **Deduplication:** Hash fingerprinting prevents repetitive alerting on unchanged threat conditions.
 - **Lifecycle Tracking:** Manages alert transitions across `NEW`, `ACTIVE`, and `RESOLVED` states with an auditable in-memory session buffer.
+
+### Phase 10 — Real Security Recommendation Engine
+- **Pipeline:** Detection $\to$ Forecasting $\to$ Escalation $\to$ Correlated Clusters $\to$ Early Warning $\to$ Recommendation Matrix $\to$ Defensive Actions.
+- **Defensive Nature:** Strictly non-destructive, non-automated advisory suggestions for human SOC operators (e.g., *"Consider reviewing firewall rules"*, *"Security operator should verify process telemetry"*). Zero offensive instructions or automated modifications.
+- **Contextual Mitigation Actions:**
+  - `CRITICAL`: Upstream flow rate-limiting, perimeter scrubbing, Tier-2 SOC bridge escalation, NetFlow capture preservation.
+  - `HIGH`: Host network quarantine / VLAN isolation after C2 verification, host process & authentication audit, egress firewall filtering review.
+  - `MEDIUM`: Firewall access list review for probed destination ports, NetFlow export granularity boost, internal service exposure audit.
+  - `LOW`: Routine baseline telemetry monitoring, scheduled access control & model drift reviews.
+- **5-Source Evidence Attribution:** Every recommendation explicitly links back to Phase 5 Detection, Phase 6 Forecast, Phase 7 Escalation, Phase 8 Attack Story, and Phase 9 Early Warning.
+- **Operator Lifecycle States:**
+  - `PENDING`: Initial state upon evaluation.
+  - `ACKNOWLEDGED`: Operator has reviewed and accepted the recommendation.
+  - `RESOLVED`: Condition neutralized or telemetry returned to `BENIGN` baseline.
+
 

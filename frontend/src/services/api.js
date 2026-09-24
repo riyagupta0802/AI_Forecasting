@@ -247,6 +247,54 @@ class ApiService {
     });
   }
 
+  /**
+   * Recommendation Engine status & statistical summary (Phase 10): GET /api/recommendations/status
+   */
+  async getRecommendationsStatus() {
+    return this.request('/recommendations/status');
+  }
+
+  /**
+   * Defensive Security Recommendations (Phase 10): GET /api/recommendations
+   */
+  async getRecommendations(params = {}) {
+    const query = new URLSearchParams();
+    if (params.priority) query.append('priority', params.priority);
+    if (params.category) query.append('category', params.category);
+    if (params.status) query.append('status', params.status);
+    if (params.context) query.append('context', params.context);
+    if (params.limit) query.append('limit', params.limit);
+    const queryString = query.toString();
+    const endpoint = queryString ? `/recommendations?${queryString}` : '/recommendations';
+    return this.request(endpoint);
+  }
+
+  /**
+   * Generate Contextual Recommendations On-Demand (Phase 10): POST /api/recommendations/generate
+   */
+  async generateRecommendations(payload = {}) {
+    return this.request('/recommendations/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  /**
+   * Update Recommendation Operator Status (Phase 10): PATCH /api/recommendations/{id}/status
+   */
+  async updateRecommendationStatus(recommendationId, newStatus) {
+    return this.request(`/recommendations/${encodeURIComponent(recommendationId)}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }

@@ -38,6 +38,14 @@ from app.schemas.warning import (
     WarningsResponse,
     WarningEvaluateRequest,
 )
+from app.schemas.recommendations import (
+    SecurityRecommendationSchema,
+    RecommendationsSummarySchema,
+    RecommendationsStatusResponse,
+    RecommendationsResponse,
+    RecommendationGenerateRequest,
+    RecommendationStatusUpdateRequest,
+)
 
 __all__ = [
     "HealthResponse",
@@ -71,6 +79,13 @@ __all__ = [
     "WarningsStatusResponse",
     "WarningsResponse",
     "WarningEvaluateRequest",
+    "SecurityRecommendationSchema",
+    "RecommendationsSummarySchema",
+    "RecommendationsStatusResponse",
+    "RecommendationsResponse",
+    "RecommendationGenerateRequest",
+    "RecommendationStatusUpdateRequest",
 ]
+
 
 
