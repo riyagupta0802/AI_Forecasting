@@ -84,10 +84,30 @@ class ApiService {
   }
 
   /**
-   * Attack forecast status placeholder: GET /api/forecast/status
+   * Attack forecast status and real transition projection (Phase 6): GET /api/forecast/status
    */
   async getForecastStatus() {
     return this.request('/forecast/status');
+  }
+
+  /**
+   * Real evaluated forecasting test-set metrics (Phase 6): GET /api/forecast/metrics
+   */
+  async getForecastMetrics() {
+    return this.request('/forecast/metrics');
+  }
+
+  /**
+   * Live attack detection -> stage -> forecast transition (Phase 6): POST /api/forecast/predict
+   */
+  async predictForecast(payload = {}) {
+    return this.request('/forecast/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
   }
 
   /**

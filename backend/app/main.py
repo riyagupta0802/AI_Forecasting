@@ -19,8 +19,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="AI-based Network Attack Forecasting & Early Warning System - Phase 5 AI Attack Detection",
-    version="1.0.0-phase5",
+    description="AI-based Network Attack Forecasting & Early Warning System - Phase 6 Real Attack Forecasting",
+    version="1.0.0-phase6",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -44,7 +44,7 @@ async def root():
     """Root entry point providing basic project info."""
     return {
         "project": settings.PROJECT_NAME,
-        "phase": "Phase 5 - AI Attack Detection",
+        "phase": "Phase 6 - Real Attack Forecasting",
         "docs": "/docs",
         "health": f"{settings.API_PREFIX}/health",
     }

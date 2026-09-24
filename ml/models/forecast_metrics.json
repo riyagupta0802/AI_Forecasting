@@ -1,0 +1,127 @@
+{
+  "model_type": "Multi-Class Random Forest Stage Classifier",
+  "task": "Network Attack Stage Forecasting & Transition Modeling",
+  "random_state": 42,
+  "n_estimators": 100,
+  "max_depth": 12,
+  "train_samples": 400,
+  "test_samples": 100,
+  "classes": [
+    "BENIGN",
+    "Bot",
+    "DDoS",
+    "PortScan"
+  ],
+  "class_mapping": {
+    "0": "BENIGN",
+    "1": "Bot",
+    "2": "DDoS",
+    "3": "PortScan"
+  },
+  "accuracy": 0.98,
+  "precision_macro": 0.9917,
+  "recall_macro": 0.9375,
+  "f1_score_macro": 0.96,
+  "precision_weighted": 0.9807,
+  "recall_weighted": 0.98,
+  "f1_score_weighted": 0.9787,
+  "confusion_matrix": [
+    [
+      58,
+      0,
+      0,
+      0
+    ],
+    [
+      2,
+      6,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      22,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      12
+    ]
+  ],
+  "per_class_metrics": {
+    "BENIGN": {
+      "class_code": 0,
+      "precision": 0.9667,
+      "recall": 1.0,
+      "f1_score": 0.9831,
+      "support": 58
+    },
+    "Bot": {
+      "class_code": 1,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1_score": 0.8571,
+      "support": 8
+    },
+    "DDoS": {
+      "class_code": 2,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 22
+    },
+    "PortScan": {
+      "class_code": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 12
+    }
+  },
+  "top_features": [
+    {
+      "feature": "Bwd Packet Length Std",
+      "importance": 0.0716
+    },
+    {
+      "feature": "Fwd Packet Length Std",
+      "importance": 0.0664
+    },
+    {
+      "feature": "Avg Bwd Segment Size",
+      "importance": 0.0543
+    },
+    {
+      "feature": "Bwd Packet Length Mean",
+      "importance": 0.053
+    },
+    {
+      "feature": "Bwd Packet Length Max",
+      "importance": 0.0491
+    },
+    {
+      "feature": "Bwd Packet Length Min",
+      "importance": 0.0467
+    },
+    {
+      "feature": "Packet Length Variance",
+      "importance": 0.0377
+    },
+    {
+      "feature": "Total Length of Bwd Packets",
+      "importance": 0.0372
+    },
+    {
+      "feature": "Packet Length Mean",
+      "importance": 0.0348
+    },
+    {
+      "feature": "Fwd Packet Length Min",
+      "importance": 0.0322
+    }
+  ],
+  "limitations": "Current dataset consists of 500 flow-level summary records without wall-clock timestamps. The model reliably classifies flow stage (98% test accuracy). Stage transition forecasting is modeled via empirical Cyber Kill Chain progression dynamics rather than direct sequence autoregression. Future iterations with continuous PCAP traces can utilize the modular preprocessing interface for LSTM/GRU."
+}
