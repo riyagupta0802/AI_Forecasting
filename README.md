@@ -57,8 +57,45 @@ Phase 7 Time-to-Escalation Engine (Telemetry Velocity Index + RandomForestRegres
             ↓
 Phase 8 Real Attack Story Engine (Event Correlation, Chronological Timeline & 5 SOC Answers)
             ↓
-HEX HIVE SOC Dashboard (AttackStoryPreview) & Dedicated Page (AttackStoryPage)
+Phase 9 Real Early Warning Engine (Multi-Source Evidence, Decision Matrix & Alert Triage)
+            ↓
+HEX HIVE SOC Dashboard (EarlyWarningCard) & Dedicated Triage Page (EarlyWarningsPage)
 ```
+
+---
+
+## Phase 9: Real Early Warning Engine
+
+### Purpose & Early Warning Definition
+An Early Warning represents:
+> *"Available evidence indicates an elevated or potentially escalating security condition that deserves attention."*  
+> (It does not guarantee that a full breach has succeeded or that a future attack is absolute certainty.)
+
+### Warning Decision Rules & Severity Matrix
+Severity levels are derived deterministically from multi-source pipeline evidence:
+- **CRITICAL (`VOLUMETRIC_DISRUPTION`):** Active volumetric denial-of-service (`DDoS`) targeting web endpoints (ports 80/443), OR imminent escalation ($\le 60\text{ seconds}$) with high velocity ($V \ge 1.5\text{x}$).
+- **HIGH (`MALICIOUS_STAGING`):** Active command & control or botnet communication (`Bot`) targeting known C2 ports (6667, 4444), OR short escalation countdown ($61\text{s} - 180\text{s}$).
+- **MEDIUM (`SUSPICIOUS_RECONNAISSANCE`):** Systematic multi-port reconnaissance probe (`PortScan`) across multiple endpoints, OR moderate escalation window ($181\text{s} - 360\text{s}$).
+- **LOW (`POTENTIAL_ESCALATION`):** Anomalous flow telemetry detected with low velocity or an extended escalation window ($> 360\text{s}$).
+- **INFO (`BASELINE_OBSERVATION`):** Operational baseline telemetry (`BENIGN`), no active intrusion indicators detected.
+
+### Multi-Source Evidence Compilation
+Every early warning is backed by four distinct, verifiable evidence vectors:
+1. **Detection Evidence:** Binary prediction and confidence from Phase 5 Random Forest classifier.
+2. **Forecast Evidence:** Identified stage and Kill Chain transition probability from Phase 6 model.
+3. **Escalation Evidence:** Calibrated escalation window, velocity index, and risk level from Phase 7 regressor.
+4. **Correlated Event Evidence:** Cluster count, target service ports, and TCP flags from Phase 8 correlator.
+
+### Deduplication & Warning Lifecycle
+- **Deduplication:** Alerts compute a cryptographic fingerprint hash based on warning type, severity, states, and target ports to eliminate repetitive alert spam.
+- **Lifecycle:**
+  - `NEW`: Initial alert generation for a novel threat condition.
+  - `ACTIVE`: Persistent threat condition across telemetry intervals.
+  - `RESOLVED`: Telemetry returns to normal `BENIGN` operational baseline.
+- **Session History:** In-memory ring buffer (up to 50 alerts) enabling SOC analysts to audit alert progressions and lifecycle transitions.
+
+### Scientific Limitations & Disclosures
+Early warnings are synthesized from deterministic rules applied to empirical telemetry from the 500-sample CICIDS2017 aggregate dataset. Warnings indicate elevated security risk based on empirical patterns and do not claim absolute certainty. All limitations are explicitly disclosed on the dashboard.
 
 ---
 
@@ -114,6 +151,11 @@ Escalation is defined as the transition from a lower-severity pre-attack conditi
 ---
 
 ## API Endpoints
+
+### Phase 9 Early Warning Endpoints
+- `GET /api/warnings/status` — Returns warning engine readiness, active warning status, history count, and limitations.
+- `GET /api/warnings` — Returns active early warnings, multi-source evidence breakdown, and session history with optional filters (`severity`, `warning_type`, `status`, `context`, `limit`).
+- `POST /api/warnings/evaluate` — Evaluates current telemetry or scenario preset (`portscan`, `bot`, `ddos`, `benign`, `auto`) and returns actionable warning decision.
 
 ### Phase 8 Attack Story Endpoints
 - `GET /api/attack-story/status` — Returns attack story readiness, ingested flow event count, cluster count, active posture, and limitations.

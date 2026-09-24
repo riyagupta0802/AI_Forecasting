@@ -41,12 +41,18 @@ ml/
 │   ├── model.py                        # TimeToEscalationEngine & risk thresholds
 │   ├── train.py                        # Phase 7 Supervised regression training script
 │   └── predict.py                      # EscalationPredictor end-to-end inference engine
-└── attack_story/
+├── attack_story/
+│   ├── __init__.py                     # Module exports
+│   ├── events.py                       # NetworkSecurityEvent schema & dataset normalizer
+│   ├── correlation.py                  # EventCorrelator & CorrelatedAttackCluster
+│   ├── timeline.py                     # ChronologicalTimelineBuilder & TimelineNode
+│   └── story.py                        # AttackStoryEngine (5 SOC questions synthesis)
+└── warning/
     ├── __init__.py                     # Module exports
-    ├── events.py                       # NetworkSecurityEvent schema & dataset normalizer
-    ├── correlation.py                  # EventCorrelator & CorrelatedAttackCluster
-    ├── timeline.py                     # ChronologicalTimelineBuilder & TimelineNode
-    └── story.py                        # AttackStoryEngine (5 SOC questions synthesis)
+    ├── models.py                       # EarlyWarning & EvidenceItem dataclasses
+    ├── rules.py                        # Deterministic severity matrix & decision logic
+    ├── formatter.py                    # Title, message, and evidence text synthesizers
+    └── engine.py                       # EarlyWarningEngine (Lifecycle & deduplication)
 ```
 
 ## Machine Learning Capabilities
@@ -87,3 +93,15 @@ ml/
   3. *What is happening now?* (Current Phase 5 detected threat)
   4. *What may happen next?* (Phase 6 Kill Chain forecast transition)
   5. *How is the threat escalating?* (Phase 7 velocity-calibrated escalation window)
+
+### Phase 9 — Real Early Warning Engine
+- **Pipeline:** Detection $\to$ Forecasting $\to$ Escalation $\to$ Correlated Clusters $\to$ Decision Matrix $\to$ Deduplicated Warnings $\to$ Triage Evidence.
+- **Evidence-Grounded Rules:**
+  - `CRITICAL`: Active volumetric attack (`DDoS`) or imminent high-velocity escalation ($\le 60\text{s}, V \ge 1.5\text{x}$).
+  - `HIGH`: Active botnet C2 staging (`Bot`) or short escalation countdown ($61\text{s} - 180\text{s}$).
+  - `MEDIUM`: Systematic multi-port reconnaissance probe (`PortScan`) or moderate escalation ($181\text{s} - 360\text{s}$).
+  - `LOW`: Low-velocity anomalous telemetry or extended escalation horizon ($> 360\text{s}$).
+  - `INFO`: Normal baseline operational telemetry (`BENIGN`), zero active threats.
+- **Deduplication:** Hash fingerprinting prevents repetitive alerting on unchanged threat conditions.
+- **Lifecycle Tracking:** Manages alert transitions across `NEW`, `ACTIVE`, and `RESOLVED` states with an auditable in-memory session buffer.
+

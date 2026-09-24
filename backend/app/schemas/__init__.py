@@ -31,6 +31,13 @@ from app.schemas.ml import (
     PredictRequest,
     PredictResponse,
 )
+from app.schemas.warning import (
+    EvidenceItemSchema,
+    EarlyWarningSchema,
+    WarningsStatusResponse,
+    WarningsResponse,
+    WarningEvaluateRequest,
+)
 
 __all__ = [
     "HealthResponse",
@@ -59,6 +66,11 @@ __all__ = [
     "ConfusionMatrixResponse",
     "PredictRequest",
     "PredictResponse",
+    "EvidenceItemSchema",
+    "EarlyWarningSchema",
+    "WarningsStatusResponse",
+    "WarningsResponse",
+    "WarningEvaluateRequest",
 ]
 
 

@@ -212,6 +212,41 @@ class ApiService {
     });
   }
 
+  /**
+   * Early Warning Engine status & inventory (Phase 9): GET /api/warnings/status
+   */
+  async getWarningsStatus() {
+    return this.request('/warnings/status');
+  }
+
+  /**
+   * Active Early Warnings & History (Phase 9): GET /api/warnings
+   */
+  async getWarnings(params = {}) {
+    const query = new URLSearchParams();
+    if (params.severity) query.append('severity', params.severity);
+    if (params.warning_type) query.append('warning_type', params.warning_type);
+    if (params.status) query.append('status', params.status);
+    if (params.context) query.append('context', params.context);
+    if (params.limit) query.append('limit', params.limit);
+    const queryString = query.toString();
+    const endpoint = queryString ? `/warnings?${queryString}` : '/warnings';
+    return this.request(endpoint);
+  }
+
+  /**
+   * Evaluate Threat Context for Early Warnings (Phase 9): POST /api/warnings/evaluate
+   */
+  async evaluateWarnings(payload = {}) {
+    return this.request('/warnings/evaluate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }
