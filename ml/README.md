@@ -1,6 +1,6 @@
 # HEX HIVE — Machine Learning & Forecasting Architecture
 
-This directory contains the machine learning pipelines for network attack detection and progression forecasting in the HEX HIVE / NETORACLE platform.
+This directory contains the machine learning pipelines for network attack detection, progression forecasting, and time-to-escalation estimation in the HEX HIVE / NETORACLE platform.
 
 ## Directory Structure
 
@@ -22,17 +22,25 @@ ml/
 │   ├── attack_classifier.joblib        # Phase 5 Binary Random Forest classifier (99% acc)
 │   ├── model_metrics.json              # Phase 5 Binary test metrics
 │   ├── forecast_stage_classifier.joblib# Phase 6 Multi-Class Random Forest classifier (98% acc)
-│   └── forecast_metrics.json           # Phase 6 Multi-Class test metrics & confusion matrix
+│   ├── forecast_metrics.json           # Phase 6 Multi-Class test metrics & confusion matrix
+│   ├── escalation_model.joblib         # Phase 7 Supervised Escalation Regressor (MAE: 8.38s)
+│   └── escalation_metrics.json         # Phase 7 Regression metrics (MAE, RMSE, R²)
 ├── training/
 │   └── train.py                        # Phase 5 Binary training script
 ├── predictions/
 │   └── predict.py                      # Phase 5 Binary inference engine
-└── forecasting/
+├── forecasting/
+│   ├── __init__.py                     # Module exports
+│   ├── preprocessing.py                # Sequence tensor & tabular feature alignment
+│   ├── model.py                        # AttackForecastingModel & Kill Chain transitions
+│   ├── train.py                        # Phase 6 Multi-Class training script
+│   └── predict.py                      # AttackForecaster end-to-end inference engine
+└── escalation/
     ├── __init__.py                     # Module exports
-    ├── preprocessing.py                # Sequence tensor & tabular feature alignment
-    ├── model.py                        # AttackForecastingModel & Kill Chain transitions
-    ├── train.py                        # Phase 6 Multi-Class training script
-    └── predict.py                      # AttackForecaster end-to-end inference engine
+    ├── preprocessing.py                # Temporal velocity feature extraction
+    ├── model.py                        # TimeToEscalationEngine & risk thresholds
+    ├── train.py                        # Phase 7 Supervised regression training script
+    └── predict.py                      # EscalationPredictor end-to-end inference engine
 ```
 
 ## Machine Learning Capabilities
@@ -48,3 +56,13 @@ ml/
 - **Stage Model:** `RandomForestClassifier(n_estimators=100, max_depth=12, random_state=42)`.
 - **Test Metrics:** 98.0% Accuracy, 99.17% Macro Precision, 93.75% Macro Recall, 96.00% Macro F1.
 - **Transition Forecaster:** Projects next probable stage, calibrated confidence, risk level, and visual trajectory based on empirical Cyber Kill Chain progression dynamics.
+
+### Phase 7 — Real Time-to-Escalation
+- **Pipeline:** Detection $\to$ Stage Forecasting $\to$ Flow Velocity Extraction $\to$ Escalation Window Estimation.
+- **Model:** `RandomForestRegressor(n_estimators=100, max_depth=8, random_state=42)` + Dynamic Telemetry Velocity Index.
+- **Test Metrics:** MAE: `8.38 seconds`, RMSE: `33.83 seconds`, $R^2$: `0.9566`.
+- **Escalation Windows:**
+  - `PortScan` $\to$ Reconnaissance to foothold: ~120s to 360s (velocity-modulated).
+  - `Bot` $\to$ C2 staging to botnet flood: ~45s to 180s (velocity-modulated).
+  - `DDoS` $\to$ 0s (Already at peak impact).
+  - `BENIGN` $\to$ Not escalating (Baseline stable).

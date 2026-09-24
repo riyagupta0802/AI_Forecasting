@@ -1,0 +1,62 @@
+{
+  "model_type": "RandomForestRegressor (Escalation Window Regressor)",
+  "task": "Time-to-Escalation Window Estimation",
+  "random_state": 42,
+  "n_estimators": 100,
+  "max_depth": 8,
+  "train_samples": 400,
+  "test_samples": 100,
+  "target_unit": "seconds",
+  "mean_absolute_error": 8.38,
+  "root_mean_squared_error": 33.83,
+  "r2_score": 0.9566,
+  "top_features": [
+    {
+      "feature": "Packet Length Variance",
+      "importance": 0.1121
+    },
+    {
+      "feature": "Max Packet Length",
+      "importance": 0.1109
+    },
+    {
+      "feature": "Fwd Packet Length Std",
+      "importance": 0.0938
+    },
+    {
+      "feature": "Fwd Packet Length Min",
+      "importance": 0.0927
+    },
+    {
+      "feature": "Total Length of Fwd Packets",
+      "importance": 0.0846
+    },
+    {
+      "feature": "Average Packet Size",
+      "importance": 0.0801
+    },
+    {
+      "feature": "Packet Length Mean",
+      "importance": 0.0754
+    },
+    {
+      "feature": "Packet Length Std",
+      "importance": 0.0719
+    },
+    {
+      "feature": "Fwd Packet Length Mean",
+      "importance": 0.0592
+    },
+    {
+      "feature": "Fwd Packet Length Max",
+      "importance": 0.0504
+    }
+  ],
+  "risk_thresholds": {
+    "CRITICAL": "<= 60s",
+    "HIGH": "61s - 180s",
+    "MODERATE": "181s - 360s",
+    "LOW": "> 360s or Not Escalating"
+  },
+  "limitations": "Current dataset consists of 500 flow-level summary records without wall-clock timestamps. Escalation targets are modeled via flow velocity calibration (packet arrival rate, byte volume, and flow duration) combined with empirical Kill Chain progression baselines. Future iterations with continuous multi-hour PCAPs can ingest chronological sequence timestamps."
+}

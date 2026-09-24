@@ -11,72 +11,55 @@ import {
   Clock,
   RefreshCw,
   Sliders,
+  Gauge,
 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import DemoBadge from '../common/DemoBadge';
 import apiService from '../../services/api';
 
 /**
- * AttackForecastCard - Phase 6 Component
- * Real Machine Learning Attack Stage Forecasting & Transition Dynamics.
- * Connects Phase 5 detection telemetry to multi-stage classification and Kill Chain transitions.
+ * AttackForecastCard - Phase 6 & Phase 7 Component
+ * Real Machine Learning Attack Stage Forecasting & Time-to-Escalation Engine.
+ * Integrates Detection -> Multi-Stage Forecasting -> Velocity-Calibrated Escalation Windows.
  */
-export const AttackForecastCard = ({ forecastData: initialData }) => {
+export const AttackForecastCard = ({ forecastData: initialForecast }) => {
   const { t } = useLanguage();
 
-  const [forecast, setForecast] = useState(initialData || null);
-  const [metrics, setMetrics] = useState(null);
-  const [loading, setLoading] = useState(!initialData);
+  const [forecast, setForecast] = useState(initialForecast || null);
+  const [escalation, setEscalation] = useState(null);
+  const [forecastMetrics, setForecastMetrics] = useState(null);
+  const [escalationMetrics, setEscalationMetrics] = useState(null);
+  const [loading, setLoading] = useState(!initialForecast);
   const [testingSample, setTestingSample] = useState(false);
   const [activeSample, setActiveSample] = useState('benign');
   const [error, setError] = useState(null);
   const [lastInferenceTime, setLastInferenceTime] = useState(null);
 
-  const fetchForecastData = useCallback(async () => {
+  const fetchCardData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [statusRes, metricsRes] = await Promise.all([
+      const [forecastRes, escRes, fMetricsRes, eMetricsRes] = await Promise.all([
         apiService.getForecastStatus(),
+        apiService.getEscalationStatus(),
         apiService.getForecastMetrics(),
+        apiService.getEscalationMetrics(),
       ]);
 
-      if (statusRes.ok && statusRes.data) {
-        setForecast(statusRes.data);
-      } else {
-        // Fallback default baseline if server is starting
-        setForecast({
-          forecast_available: true,
-          status: 'active',
-          current_state: 'BENIGN',
-          current_state_desc: 'Normal Baseline Traffic',
-          predicted_next_stage: 'BENIGN',
-          predicted_next_stage_display: 'BENIGN (Normal Baseline)',
-          confidence: 88.0,
-          risk_level: 'LOW',
-          model: 'StageClassifier + EmpiricalKillChainTransition',
-          explanation:
-            'Network flows match baseline operational traffic patterns. Transition probability indicates high stability.',
-          trajectory: [
-            { stage: 'BENIGN', status: 'active', probability: 'Active State', is_current: true },
-            { stage: 'PortScan', status: 'projected', probability: '12%', is_projected: true },
-            { stage: 'Bot', status: 'projected', probability: '0%' },
-            { stage: 'DDoS', status: 'projected', probability: '0%' },
-          ],
-        });
+      if (forecastRes.ok && forecastRes.data) {
+        setForecast(forecastRes.data);
       }
-
-      if (metricsRes.ok && metricsRes.data) {
-        setMetrics(metricsRes.data);
-      } else {
-        setMetrics({
-          accuracy: 0.98,
-          f1_score_macro: 0.96,
-          test_samples: 100,
-        });
+      if (escRes.ok && escRes.data) {
+        setEscalation(escRes.data);
+      }
+      if (fMetricsRes.ok && fMetricsRes.data) {
+        setForecastMetrics(fMetricsRes.data);
+      }
+      if (eMetricsRes.ok && eMetricsRes.data) {
+        setEscalationMetrics(eMetricsRes.data);
       }
     } catch (err) {
-      console.warn('Forecast API unavailable, using local baseline:', err);
+      console.warn('Backend unavailable, using default baseline values:', err);
       setError('Backend unreachable');
       setForecast({
         forecast_available: true,
@@ -88,7 +71,19 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
         confidence: 88.0,
         risk_level: 'LOW',
         model: 'StageClassifier + EmpiricalKillChainTransition',
-        explanation: 'Operating with local baseline model weights.',
+        time_to_escalation: null,
+      });
+      setEscalation({
+        available: true,
+        current_state: 'BENIGN',
+        predicted_state: 'BENIGN',
+        escalation_condition: 'Baseline traffic; no active intrusion escalation pattern detected',
+        is_escalating: false,
+        formatted_time: 'Not Escalating',
+        risk_level: 'LOW',
+        confidence: 88.0,
+        velocity_index: 1.0,
+        method: 'TelemetryVelocityCalibratedProgression',
       });
     } finally {
       setLoading(false);
@@ -96,21 +91,39 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
   }, []);
 
   useEffect(() => {
-    fetchForecastData();
-  }, [fetchForecastData]);
+    fetchCardData();
+  }, [fetchCardData]);
 
-  // Interactive Live Inference Scenario Tester
+  // Interactive Live Scenario Inference Tester
   const handleTestScenario = async (sampleType) => {
     setTestingSample(true);
     setActiveSample(sampleType);
     try {
-      const res = await apiService.predictForecast({ sample_type: sampleType });
+      // predictEscalation executes full chain: Detection -> Forecasting -> Time-to-Escalation
+      const res = await apiService.predictEscalation({ sample_type: sampleType });
       if (res.ok && res.data) {
-        setForecast(res.data);
-        setLastInferenceTime(res.data.latency_ms);
+        const data = res.data;
+        setEscalation(data);
+        setLastInferenceTime(data.latency_ms);
+
+        // Update forecast state from returned context
+        setForecast((prev) => ({
+          ...prev,
+          forecast_available: true,
+          status: 'active',
+          current_state: data.current_state,
+          current_state_desc: data.current_state === 'BENIGN' ? 'Normal Baseline Traffic' : `${data.current_state} Threat Ingestion`,
+          predicted_next_stage: data.predicted_state,
+          predicted_next_stage_display: data.forecast_context?.predicted_next_stage_display || data.predicted_state,
+          confidence: data.confidence,
+          risk_level: data.risk_level,
+          time_to_escalation: data.estimated_time_seconds,
+          explanation: data.explanation,
+          trajectory: data.forecast_context?.trajectory || prev?.trajectory,
+        }));
       }
     } catch (err) {
-      console.error('Failed to run forecast prediction:', err);
+      console.error('Failed to run escalation prediction:', err);
     } finally {
       setTestingSample(false);
     }
@@ -122,6 +135,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
         return 'text-red font-bold';
       case 'HIGH':
         return 'text-amber font-semibold';
+      case 'MODERATE':
       case 'MEDIUM':
         return 'text-amber';
       case 'LOW':
@@ -136,6 +150,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
         return 'bg-red-500/20 text-red border border-red-500/30';
       case 'HIGH':
         return 'bg-amber-500/20 text-amber border border-amber-500/30';
+      case 'MODERATE':
       case 'MEDIUM':
         return 'bg-blue-500/20 text-cyan border border-blue-500/30';
       case 'LOW':
@@ -144,7 +159,6 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
     }
   };
 
-  // Trajectory stages fallback
   const trajectoryStages = forecast?.trajectory || [
     { stage: 'BENIGN', status: forecast?.current_state === 'BENIGN' ? 'active' : 'completed', probability: 'Active', is_current: forecast?.current_state === 'BENIGN' },
     { stage: 'PortScan', status: forecast?.current_state === 'PortScan' ? 'active' : (forecast?.predicted_next_stage === 'PortScan' ? 'forecasted' : 'projected'), probability: '12%', is_projected: forecast?.predicted_next_stage === 'PortScan' },
@@ -189,7 +203,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
           <button
             type="button"
             className="btn-card-refresh"
-            onClick={fetchForecastData}
+            onClick={fetchCardData}
             title={t('status.checking')}
             disabled={loading}
             style={{
@@ -205,9 +219,9 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
         </div>
       </div>
 
-      {/* Primary Forecast Metrics Grid */}
+      {/* Primary Metrics Grid: Current State | Projected Next Stage | Confidence | Time to Escalation */}
       <div className="forecast-metrics-grid">
-        {/* Current State */}
+        {/* 1. Current State */}
         <div className="forecast-metric-box">
           <span className="forecast-metric-label">{t('forecast.currentPattern')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
@@ -224,7 +238,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
           </span>
         </div>
 
-        {/* Projected Next Stage */}
+        {/* 2. Projected Next Stage */}
         <div className="forecast-metric-box highlight-box">
           <span className="forecast-metric-label">{t('forecast.possibleNextStage')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
@@ -255,7 +269,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
           </span>
         </div>
 
-        {/* Forecast Confidence */}
+        {/* 3. Forecast Confidence */}
         <div className="forecast-metric-box">
           <span className="forecast-metric-label">{t('forecast.forecastConfidence')}</span>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem', marginTop: '0.2rem' }}>
@@ -286,12 +300,21 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
           </div>
         </div>
 
-        {/* Architecture & Evaluation */}
-        <div className="forecast-metric-box">
-          <span className="forecast-metric-label">{t('forecast.modelArchitecture')}</span>
-          <span className="forecast-metric-val" style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>
-            Multi-Class RF + Kill Chain
+        {/* 4. Real Time to Escalation (Phase 7) */}
+        <div className="forecast-metric-box highlight-box">
+          <span className="forecast-metric-label" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Clock size={13} className="accent-amber-icon" />
+            {t('forecast.timeToEscalation')}
           </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.2rem' }}>
+            <span
+              className={`forecast-metric-val ${
+                escalation?.is_escalating ? getRiskClass(escalation?.risk_level) : 'text-green'
+              }`}
+            >
+              {escalation?.formatted_time || (forecast?.time_to_escalation ? `${forecast.time_to_escalation}s` : t('escalation.statusNotEscalating'))}
+            </span>
+          </div>
           <span
             style={{
               fontSize: '0.7rem',
@@ -299,10 +322,57 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
               marginTop: '0.25rem',
             }}
           >
-            {metrics ? `Accuracy: ${(metrics.accuracy * 100).toFixed(1)}% | F1: ${(metrics.f1_score_macro * 100).toFixed(1)}%` : 'Test Acc: 98.0%'}
+            {escalation?.is_escalating ? `Target: ${escalation.predicted_state}` : (escalationMetrics ? `MAE: ${escalationMetrics.mean_absolute_error}s` : 'Baseline Stable')}
           </span>
         </div>
       </div>
+
+      {/* Threat Escalation Condition & Telemetry Velocity Strip (Phase 7) */}
+      {escalation && (
+        <div
+          style={{
+            background: 'rgba(7, 11, 20, 0.4)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '6px',
+            padding: '0.65rem 0.9rem',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+            fontSize: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Gauge size={14} className="accent-cyan-icon" />
+            <span style={{ color: 'var(--text-muted)' }}>{t('escalation.conditionTitle')}:</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
+              {escalation.escalation_condition}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <span style={{ color: 'var(--text-muted)' }}>
+              {t('escalation.velocityTitle')}:{' '}
+              <strong style={{ color: escalation.velocity_index > 1.2 ? '#EF4444' : '#10B981' }}>
+                {escalation.velocity_index}x
+              </strong>
+            </span>
+            <span
+              style={{
+                fontSize: '0.68rem',
+                color: 'var(--text-muted)',
+                background: 'rgba(255,255,255,0.04)',
+                padding: '0.15rem 0.45rem',
+                borderRadius: '4px',
+              }}
+            >
+              {t('escalation.modelName')}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Visual Attack Trajectory Progression Track */}
       <div className="forecast-trajectory-section">
@@ -312,7 +382,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
             <span className="trajectory-title">{t('forecast.trajectoryTitle')}</span>
           </div>
           <span className="trajectory-note">
-            {testingSample ? 'Simulating transition...' : (lastInferenceTime ? `Latency: ${lastInferenceTime}ms` : 'Kill Chain Lifecycle')}
+            {testingSample ? 'Simulating transition...' : (lastInferenceTime ? `Inference: ${lastInferenceTime}ms` : 'Kill Chain Lifecycle')}
           </span>
         </div>
 
@@ -467,10 +537,10 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
       </div>
 
       {/* Dynamic Explanation Callout */}
-      {forecast?.explanation && (
+      {(escalation?.explanation || forecast?.explanation) && (
         <div className="forecast-footer-callout" style={{ alignItems: 'flex-start', marginBottom: '0.75rem' }}>
           <Info size={16} style={{ minWidth: '16px', marginTop: '2px', color: 'var(--accent-cyan)' }} />
-          <span style={{ lineHeight: 1.45 }}>{forecast.explanation}</span>
+          <span style={{ lineHeight: 1.45 }}>{escalation?.explanation || forecast?.explanation}</span>
         </div>
       )}
 
@@ -488,7 +558,7 @@ export const AttackForecastCard = ({ forecastData: initialData }) => {
       >
         <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Note:</span>
         <span style={{ lineHeight: 1.4 }}>
-          {forecast?.limitations || t('forecast.limitationsDefault')}
+          {escalation?.limitations || forecast?.limitations || t('forecast.limitationsDefault')}
         </span>
       </div>
     </div>

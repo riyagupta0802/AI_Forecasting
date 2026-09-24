@@ -111,6 +111,33 @@ class ApiService {
   }
 
   /**
+   * Threat escalation status and estimated window (Phase 7): GET /api/escalation/status
+   */
+  async getEscalationStatus() {
+    return this.request('/escalation/status');
+  }
+
+  /**
+   * Real evaluated escalation regression metrics (Phase 7): GET /api/escalation/metrics
+   */
+  async getEscalationMetrics() {
+    return this.request('/escalation/metrics');
+  }
+
+  /**
+   * Live Detection -> Forecasting -> Time-to-Escalation (Phase 7): POST /api/escalation/predict
+   */
+  async predictEscalation(payload = {}) {
+    return this.request('/escalation/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  /**
    * Sample network traffic time-series: GET /api/traffic/sample
    */
   async getTrafficSample() {

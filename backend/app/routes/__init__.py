@@ -20,10 +20,11 @@ from app.routes.forecast import router as forecast_router
 from app.routes.traffic import router as traffic_router
 from app.routes.data import router as data_router
 from app.routes.ml import router as ml_router
+from app.routes.escalation import router as escalation_router
 
 api_router = APIRouter()
 
-# Phase 1, Phase 3, Phase 4 & Phase 5 active routes
+# Active routes across Phases 1 through 7
 api_router.include_router(health_router)
 api_router.include_router(system_router)
 api_router.include_router(network_router)
@@ -31,6 +32,7 @@ api_router.include_router(forecast_router)
 api_router.include_router(traffic_router)
 api_router.include_router(data_router)
 api_router.include_router(ml_router)
+api_router.include_router(escalation_router)
 
 __all__ = ["api_router"]
 

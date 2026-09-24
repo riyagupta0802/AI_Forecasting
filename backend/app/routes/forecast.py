@@ -25,6 +25,7 @@ from app.schemas.forecast import (
     ForecastPredictResponse,
 )
 from ml.forecasting.predict import forecaster
+from ml.escalation.predict import escalation_predictor
 
 logger = logging.getLogger("HEX_HIVE.Routes.Forecast")
 router = APIRouter(prefix="/forecast", tags=["Attack Forecasting"])
@@ -63,15 +64,18 @@ async def get_forecast_status() -> ForecastStatusResponse:
             ),
         )
 
-    # Execute real baseline forecast inference
+    # Execute real baseline forecast inference and escalation timing
     try:
         res = forecaster.predict(sample_type="benign")
+        esc_res = escalation_predictor.predict(sample_type="benign")
+        time_to_esc = esc_res.get("estimated_time_seconds")
+
         return ForecastStatusResponse(
             status="active",
             current_pattern=res.get("current_state", "BENIGN"),
             possible_next_stage=res.get("predicted_next_stage", "BENIGN"),
             confidence=res.get("confidence", 88.0),
-            time_to_escalation=None,  # Intentionally null per Phase 6 boundary
+            time_to_escalation=time_to_esc,
             forecast_available=True,
             current_state=res.get("current_state", "BENIGN"),
             current_state_desc=res.get("current_state_desc", "Normal Baseline Traffic"),

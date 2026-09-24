@@ -7,6 +7,12 @@ from app.schemas.forecast import (
     ForecastPredictRequest,
     ForecastPredictResponse,
 )
+from app.schemas.escalation import (
+    EscalationStatusResponse,
+    EscalationMetricsResponse,
+    EscalationPredictRequest,
+    EscalationPredictResponse,
+)
 from app.schemas.traffic import TrafficDataPoint, TrafficSampleResponse
 from app.schemas.data import DataStatusResponse
 from app.schemas.ml import (
@@ -25,6 +31,10 @@ __all__ = [
     "ForecastMetricsResponse",
     "ForecastPredictRequest",
     "ForecastPredictResponse",
+    "EscalationStatusResponse",
+    "EscalationMetricsResponse",
+    "EscalationPredictRequest",
+    "EscalationPredictResponse",
     "TrafficDataPoint",
     "TrafficSampleResponse",
     "DataStatusResponse",
