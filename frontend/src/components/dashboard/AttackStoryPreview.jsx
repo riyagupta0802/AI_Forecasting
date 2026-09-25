@@ -305,7 +305,11 @@ export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
                         {event.details.duration_ms !== undefined && (
                           <div className="detail-item">
                             <span className="detail-k">Duration</span>
-                            <span className="detail-v">{event.details.duration_ms.toFixed(2)} ms</span>
+                            <span className="detail-v">
+                              {typeof event.details.duration_ms === 'number'
+                                ? `${event.details.duration_ms.toFixed(2)} ms`
+                                : (event.details.duration_ms || '—')}
+                            </span>
                           </div>
                         )}
                         {event.details.syn_flag_count !== undefined && (
@@ -329,7 +333,11 @@ export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
                         {event.details.model_confidence !== undefined && (
                           <div className="detail-item">
                             <span className="detail-k">Model Confidence</span>
-                            <span className="detail-v">{(event.details.model_confidence * 100).toFixed(1)}%</span>
+                            <span className="detail-v">
+                              {typeof event.details.model_confidence === 'number'
+                                ? `${(event.details.model_confidence * 100).toFixed(1)}%`
+                                : 'N/A'}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -361,7 +369,7 @@ export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
                       ? 'chip-critical'
                       : 'chip-warning'
                   }`}
-                  title={`${cluster.event_count} flows across ports ${cluster.destination_ports.slice(0, 3).join(', ')}`}
+                  title={`${cluster.event_count} flows across ports ${Array.isArray(cluster.destination_ports) ? cluster.destination_ports.slice(0, 3).join(', ') : 'any'}`}
                 >
                   {cluster.category} ({cluster.event_count})
                 </span>

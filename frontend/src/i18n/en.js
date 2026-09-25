@@ -3,7 +3,7 @@
  */
 export default {
   brand: {
-    projectName: "HEX HIVE",
+    projectName: "NETORACLE",
     tagline: "AI-Based Network Attack Forecasting & Early Warning System",
     shortDesc: "Proactive cybersecurity intelligence beyond simple intrusion detection.",
     platformTag: "AI Security Intelligence",
@@ -359,7 +359,7 @@ export default {
   },
   systemStatus: {
     title: "System Status",
-    pageTitle: "HEX HIVE System Architecture & Health",
+    pageTitle: "NETORACLE System Architecture & Health",
     pageSubtitle: "Current connectivity across frontend, backend, ML engines, and data stores",
     prototypeDisclosure: "The status indicators below reflect the current Phase 2 prototype stage. Backend health is verified in real-time.",
     compFrontend: "Frontend Client",
@@ -406,7 +406,7 @@ export default {
     hi: "हिन्दी",
   },
   footer: {
-    copyright: "HEX HIVE • AI Network Attack Forecasting",
+    copyright: "NETORACLE • AI Network Attack Forecasting",
     phaseNote: "Phase 2 UI Prototype • Modular Cybersecurity Operations Center",
   },
   emptyState: {
@@ -480,6 +480,48 @@ export default {
     attackDesc: "Malicious traffic anomaly detected by Random Forest",
     forecastingNotice: "Awaiting Forecasting Model — Temporal attack stage & escalation prediction planned for next phase.",
   },
+  xai: {
+    title: "Explainable AI (XAI)",
+    subtitle: "Mathematical feature attribution and decision reasoning via SHAP (SHapley Additive exPlanations)",
+    badge: "Phase 11 SHAP",
+    whyDetected: "Why was this detected?",
+    simpleExplanation: "Human-Readable Decision Narrative",
+    technicalExplanation: "SHAP Mathematical Feature Decomposition",
+    topContributingFeatures: "Top Contributing Network Features",
+    colRank: "Rank",
+    colFeature: "Feature",
+    colInputValue: "Input Value",
+    colContribution: "SHAP Contribution",
+    colInfluence: "Influence Direction",
+    towardPrediction: "Toward Prediction",
+    awayFromPrediction: "Away From Prediction",
+    neutralInfluence: "Neutral",
+    baseValue: "Model Base Expected Value E[f(x)]",
+    predictedScore: "Final Margin Output f(x)",
+    methodLabel: "Explanation Method",
+    methodValue: "SHAP (TreeExplainer)",
+    modelLabel: "Model Explained",
+    modelValue: "Phase 5 Random Forest Classifier",
+    featuresEvaluated: "Features Evaluated",
+    globalImportanceTitle: "Global Feature Importance (Dataset Level)",
+    globalImportanceSubtitle: "Average absolute impact of network characteristics across 500 CICIDS2017 benchmark flows",
+    meanAbsShap: "Mean |SHAP|",
+    globalRank: "Global Rank",
+    tabLocal: "Local Flow Attribution",
+    tabGlobal: "Global Model Importance",
+    toggleSimple: "Simple Narrative",
+    toggleTechnical: "Technical Decomposition",
+    loadingExplanation: "Calculating SHAP feature contributions...",
+    noExplanationAvailable: "No SHAP explanation computed yet. Run a live classification test to evaluate feature contributions.",
+    explanationUnavailable: "Explainability engine is temporarily offline.",
+    disclaimer: "Non-Causal Attribution Notice: SHAP calculates exact Shapley values reflecting how continuous feature variations shifted the model's decision margin. It describes the model's statistical reasoning rather than physical root causes.",
+    sampleBenignTested: "Explaining Live BENIGN Flow Observation",
+    sampleAttackTested: "Explaining Live ATTACK Flow Observation",
+    btnExplainCurrent: "Explain This Prediction",
+    explaining: "Decomposing Features...",
+    featuresCount: "78 Dimensions",
+  },
 };
+
 
 

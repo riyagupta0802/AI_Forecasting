@@ -78,7 +78,7 @@ export const SecurityPipeline = () => {
     <div className="soc-pipeline-container" aria-label="AI Forecasting Pipeline">
       <div className="soc-pipeline-header">
         <div className="soc-pipeline-title-wrap">
-          <span className="soc-pipeline-badge">HEX HIVE FLOW</span>
+          <span className="soc-pipeline-badge">NETORACLE FLOW</span>
           <h3 className="soc-pipeline-heading">{t('pipeline.title')}</h3>
           <p className="soc-pipeline-sub">{t('pipeline.subtitle')}</p>
         </div>

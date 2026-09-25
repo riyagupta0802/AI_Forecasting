@@ -10,6 +10,7 @@ import RiskOverviewCard from '../components/dashboard/RiskOverviewCard';
 import AttackStoryPreview from '../components/dashboard/AttackStoryPreview';
 import EarlyWarningCard from '../components/dashboard/EarlyWarningCard';
 import RecommendedActionsCard from '../components/dashboard/RecommendedActionsCard';
+import ExplainabilityCard from '../components/dashboard/ExplainabilityCard';
 import apiService from '../services/api';
 
 export const DashboardPage = () => {
@@ -144,6 +145,11 @@ export const DashboardPage = () => {
       {/* AI Attack Detection - Random Forest Classifier (Phase 5) */}
       <section className="soc-full-width-section">
         <AttackDetectionCard />
+      </section>
+
+      {/* Real Explainable AI (XAI) - TreeExplainer SHAP Analysis (Phase 11) */}
+      <section className="soc-full-width-section" id="explainability-section">
+        <ExplainabilityCard />
       </section>
 
       {/* Attack Forecast Major Card (wired to backend /api/forecast/status) & Risk Overview */}

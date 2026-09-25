@@ -40,7 +40,7 @@ export const Sidebar = ({ activePage, onNavigate, isMobile = false, onCloseMobil
       {/* Brand Header */}
       <div className="sidebar-brand">
         <div className="sidebar-logo-wrap">
-          <img src={hiveLogo} alt="HEX HIVE Logo" className="sidebar-logo" />
+          <img src={hiveLogo} alt="NETORACLE Logo" className="sidebar-logo" />
         </div>
         <div className="sidebar-brand-text">
           <span className="sidebar-brand-name">{t('brand.projectName')}</span>

@@ -1,6 +1,6 @@
-# HEX HIVE — Machine Learning & Forecasting Architecture
+# NETORACLE — Machine Learning & Forecasting Architecture
 
-This directory contains the machine learning pipelines for network attack detection, progression forecasting, and time-to-escalation estimation in the HEX HIVE / NETORACLE platform.
+This directory contains the machine learning pipelines for network attack detection, progression forecasting, and time-to-escalation estimation in the NETORACLE platform.
 
 ## Directory Structure
 
@@ -53,12 +53,17 @@ ml/
 │   ├── rules.py                        # Deterministic severity matrix & decision logic
 │   ├── formatter.py                    # Title, message, and evidence text synthesizers
 │   └── engine.py                       # EarlyWarningEngine (Lifecycle & deduplication)
-└── recommendations/
-    ├── __init__.py                     # Module exports
-    ├── models.py                       # SecurityRecommendation & summary dataclasses
-    ├── rules.py                        # Deterministic defensive mitigation rule matrix
-    ├── formatter.py                    # 5-source verifiable evidence trail compiler
-    └── engine.py                       # RecommendationEngine (Lifecycle & deduplication)
+├── recommendations/
+│   ├── __init__.py                     # Module exports
+│   ├── models.py                       # SecurityRecommendation & summary dataclasses
+│   ├── rules.py                        # Deterministic defensive mitigation rule matrix
+│   ├── formatter.py                    # 5-source verifiable evidence trail compiler
+│   └── engine.py                       # RecommendationEngine (Lifecycle & deduplication)
+└── explainability/
+    ├── __init__.py                     # Module exports & singleton attack_explainer
+    ├── models.py                       # Dataclasses (FeatureContribution, LocalExplanationResult, etc.)
+    ├── formatter.py                    # Friendly feature mappings & non-causal explanation phrasing
+    └── explainer.py                    # AttackExplainer (TreeExplainer SHAP attribution & global importance)
 ```
 
 
@@ -125,5 +130,25 @@ ml/
   - `PENDING`: Initial state upon evaluation.
   - `ACKNOWLEDGED`: Operator has reviewed and accepted the recommendation.
   - `RESOLVED`: Condition neutralized or telemetry returned to `BENIGN` baseline.
+
+### Phase 11 — Real Explainable AI (XAI)
+- **Pipeline:** Preprocessing $\to$ Phase 5 Binary Detection $\to$ Model Prediction $\to$ SHAP TreeExplainer $\to$ Local Feature Attribution & Global Feature Importance $\to$ Non-Causal Explanation Narrative.
+- **Model Explained:** Phase 5 `RandomForestClassifier` (100 estimators, max depth 12, 78 continuous numerical flow features).
+- **Mathematical Attribution:** Uses exact Lundberg & Lee SHAP tree decomposition identity:
+  $$E[f_c(x)] + \sum_{i=1}^{78} \phi_{i, c} = \hat{P}(\text{class}=c \mid x)$$
+- **Local Sample Attribution:**
+  - Evaluates individual flow records (e.g. `attack` or `benign` benchmark flows).
+  - Returns top contributing features sorted by absolute SHAP attribution ($|\phi_i|$).
+  - Differentiates positive contributions ($\phi_i > 0$, pushing toward the predicted class) and negative contributions ($\phi_i < 0$, pushing away from the predicted class).
+  - Supplies both the actual normalized telemetry feature value and the mathematical attribution score.
+- **Global Feature Importance:**
+  - Evaluates mean absolute SHAP values across all 500 benchmark flows in the CICIDS2017 dataset:
+    $$I_j = \frac{1}{N} \sum_{k=1}^N |\phi_{k, j}|$$
+  - Identifies top predictive features across the model's split decisions (e.g. `Bwd Packet Length Std`, `Bwd Packet Length Mean`, `Avg Bwd Segment Size`, `Bwd Packet Length Min/Max`).
+  - Pre-cached in memory for sub-millisecond retrieval.
+- **Human-Readable & Non-Causal Phrasing:**
+  - Friendly translation of technical network flow features (e.g. `Bwd Packet Length Std` $\to$ *Backward Packet Size Variance*).
+  - Strictly non-causal language adhering to scientific XAI standards (*"contributed to the model's prediction"*, *"influenced the decision"*), never claiming physical causation or definitive proof.
+
 
 

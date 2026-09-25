@@ -295,10 +295,38 @@ class ApiService {
     });
   }
 
+  /**
+   * Explainable AI (XAI) Status (Phase 11): GET /api/explainability/status
+   */
+  async getExplainabilityStatus() {
+    return this.request('/explainability/status');
+  }
+
+  /**
+   * Local SHAP Explanation for Detection Prediction (Phase 11): POST /api/explainability/explain
+   */
+  async explainPrediction(payload = {}) {
+    return this.request('/explainability/explain', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  /**
+   * Global Feature Importance via Mean Absolute SHAP (Phase 11): GET /api/explainability/global
+   */
+  async getGlobalExplainability(topN = 10) {
+    return this.request(`/explainability/global?top_n=${encodeURIComponent(topN)}`);
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }
 }
+
 
 export const apiService = new ApiService();
 export default apiService;

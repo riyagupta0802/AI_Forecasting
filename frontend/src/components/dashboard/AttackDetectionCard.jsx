@@ -475,6 +475,33 @@ export const AttackDetectionCard = () => {
                   }}
                 />
               </div>
+
+              <div
+                style={{
+                  marginTop: '0.65rem',
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <a
+                  href="#explainability-section"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    fontSize: '0.74rem',
+                    color: 'var(--accent-cyan)',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    opacity: 0.9,
+                    transition: 'opacity 0.2s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.9')}
+                >
+                  <span>{t('xai.whyDetected')} &mdash; {t('xai.tabLocal')} &darr;</span>
+                </a>
+              </div>
             </div>
           </div>
         )}

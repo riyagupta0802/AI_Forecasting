@@ -133,14 +133,14 @@ export const EarlyWarningCard = () => {
               <span className={`ew-severity-pill ${getSeverityBadgeClass(severity)}`}>
                 {severity}
               </span>
-              <span className="ew-type-badge">{activeWarning.warning_type}</span>
-              <span className={`ew-lifecycle-tag tag-${activeWarning.status.toLowerCase()}`}>
-                {activeWarning.status}
+              <span className="ew-type-badge">{activeWarning.warning_type || 'Alert'}</span>
+              <span className={`ew-lifecycle-tag tag-${(activeWarning?.status || 'new').toLowerCase()}`}>
+                {activeWarning.status || 'ACTIVE'}
               </span>
             </div>
             <span className="ew-timestamp-text">
               <Clock size={11} />
-              {activeWarning.timestamp.substring(11, 19)} UTC
+              {(activeWarning?.timestamp && typeof activeWarning.timestamp === 'string' ? activeWarning.timestamp.substring(11, 19) : '--:--:--')} UTC
             </span>
           </div>
 
@@ -193,8 +193,8 @@ export const EarlyWarningCard = () => {
                   {activeWarning.evidence.map((ev, idx) => (
                     <div key={idx} className="ew-evidence-item">
                       <div className="evidence-item-top">
-                        <span className={`evidence-type-tag tag-${ev.evidence_type}`}>
-                          {ev.evidence_type.toUpperCase()}
+                        <span className={`evidence-type-tag tag-${(ev.evidence_type || 'info').toLowerCase()}`}>
+                          {(ev.evidence_type || 'INFO').toUpperCase()}
                         </span>
                         <span className="evidence-headline">{ev.headline}</span>
                       </div>

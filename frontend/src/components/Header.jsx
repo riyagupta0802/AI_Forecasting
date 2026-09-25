@@ -14,7 +14,7 @@ export const Header = () => {
         <div className="header-inner">
           <div className="brand-section">
             <div className="brand-logo-wrap">
-              <img src={hiveLogo} alt="HEX HIVE Logo" className="brand-logo" />
+              <img src={hiveLogo} alt="NETORACLE Logo" className="brand-logo" />
             </div>
             <div className="brand-title-wrap">
               <h1>{t('brand.projectName')}</h1>

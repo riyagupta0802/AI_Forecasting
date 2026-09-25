@@ -4,7 +4,7 @@
  */
 export default {
   brand: {
-    projectName: "HEX HIVE",
+    projectName: "NETORACLE",
     tagline: "एआई-आधारित नेटवर्क अटैक पूर्वानुमान और प्रारंभिक चेतावनी प्रणाली",
     shortDesc: "सरल घुसपैठ पहचान से परे सक्रिय साइबर सुरक्षा बुद्धिमत्ता।",
     platformTag: "एआई सुरक्षा इंटेलिजेंस",
@@ -360,7 +360,7 @@ export default {
   },
   systemStatus: {
     title: "सिस्टम स्थिति",
-    pageTitle: "HEX HIVE सिस्टम वास्तुकला और स्वास्थ्य",
+    pageTitle: "NETORACLE सिस्टम वास्तुकला और स्वास्थ्य",
     pageSubtitle: "फ़्रंटएंड, बैकएंड, एमएल इंजन और डेटा स्टोर में वर्तमान कनेक्टिविटी स्थिति",
     prototypeDisclosure: "नीचे दिए गए संकेतक वर्तमान चरण 2 प्रोटोटाइप स्थिति दर्शाते हैं। बैकएंड स्वास्थ्य की रीयल-टाइम जाँच की जाती है।",
     compFrontend: "फ़्रंटएंड क्लाइंट",
@@ -407,7 +407,7 @@ export default {
     hi: "हिन्दी",
   },
   footer: {
-    copyright: "HEX HIVE • एआई नेटवर्क अटैक पूर्वानुमान",
+    copyright: "NETORACLE • एआई नेटवर्क अटैक पूर्वानुमान",
     phaseNote: "चरण 2 यूआई प्रोटोटाइप • मॉड्यूलर साइबर सुरक्षा संचालन केंद्र",
   },
   emptyState: {
@@ -481,6 +481,48 @@ export default {
     attackDesc: "रैंडम फ़ॉरेस्ट द्वारा पहचानी गई दुर्भावनापूर्ण विसंगति",
     forecastingNotice: "पूर्वानुमान मॉडल की प्रतीक्षा — समय-आधारित हमला चरण और एस्केलेशन भविष्यवाणी अगले चरण के लिए नियोजित है।",
   },
+  xai: {
+    title: "व्याख्यात्मक एआई (Explainable AI - XAI)",
+    subtitle: "SHAP (SHapley Additive exPlanations) के माध्यम से गणितीय विशेषता योगदान और निर्णय तर्क",
+    badge: "चरण 11 SHAP",
+    whyDetected: "यह निर्णय क्यों लिया गया? (Why was this detected?)",
+    simpleExplanation: "मानव-पठनीय निर्णय विवरण (Simple Narrative)",
+    technicalExplanation: "SHAP गणितीय विशेषता अपघटन (Technical Decomposition)",
+    topContributingFeatures: "शीर्ष योगदान देने वाली नेटवर्क विशेषताएँ",
+    colRank: "रैंक",
+    colFeature: "विशेषता (Feature)",
+    colInputValue: "इनपुट मान",
+    colContribution: "SHAP योगदान",
+    colInfluence: "प्रभाव की दिशा",
+    towardPrediction: "पूर्वानुमान की दिशा में (Toward Prediction)",
+    awayFromPrediction: "पूर्वानुमान के विपरीत (Away From Prediction)",
+    neutralInfluence: "तटस्थ (Neutral)",
+    baseValue: "मॉडल का आधार अपेक्षित मान E[f(x)]",
+    predictedScore: "अंतिम मार्जिन स्कोर f(x)",
+    methodLabel: "व्याख्या पद्धति",
+    methodValue: "SHAP (TreeExplainer)",
+    modelLabel: "व्याख्यायित मॉडल",
+    modelValue: "चरण 5 रैंडम फ़ॉरेस्ट क्लासिफायर",
+    featuresEvaluated: "मूल्यांकित विशेषताएँ",
+    globalImportanceTitle: "वैश्विक विशेषता महत्व (ग्लोबल स्तर)",
+    globalImportanceSubtitle: "500 CICIDS2017 बेंचमार्क प्रवाहों में नेटवर्क विशेषताओं का औसत पूर्ण प्रभाव",
+    meanAbsShap: "औसत |SHAP|",
+    globalRank: "वैश्विक रैंक",
+    tabLocal: "स्थानीय प्रवाह विशेषता योगदान",
+    tabGlobal: "वैश्विक मॉडल महत्व",
+    toggleSimple: "सरल विवरण",
+    toggleTechnical: "तकनीकी विवरण",
+    loadingExplanation: "SHAP विशेषता योगदान की गणना की जा रही है...",
+    noExplanationAvailable: "अभी तक कोई SHAP व्याख्या नहीं निकाली गई है। विशेषता योगदान देखने के लिए लाइव वर्गीकरण परीक्षण चलाएं।",
+    explanationUnavailable: "व्याख्यात्मक इंजन वर्तमान में ऑफ़लाइन है।",
+    disclaimer: "गैर-कारण संबंधी सूचना: SHAP सटीक शापली मानों की गणना करता है जो दर्शाते हैं कि निरंतर सुविधा परिवर्तनों ने मॉडल के निर्णय मार्जिन को कैसे प्रभावित किया। यह भौतिक मूल कारणों के बजाय मॉडल के सांख्यिकीय तर्क का वर्णन करता है।",
+    sampleBenignTested: "लाइव BENIGN (सामान्य) प्रवाह का विश्लेषण",
+    sampleAttackTested: "लाइव ATTACK (हमला) प्रवाह का विश्लेषण",
+    btnExplainCurrent: "इस निर्णय की व्याख्या करें",
+    explaining: "विशेषताओं का विश्लेषण हो रहा है...",
+    featuresCount: "78 आयाम",
+  },
 };
+
 
 

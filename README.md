@@ -9,11 +9,11 @@ An intelligent cybersecurity operations platform that analyzes network traffic f
 - **Problem Title:** AI based Network Attack Forecasting from Network Traffic Data
 - **Theme:** Blockchain & Cybersecurity
 - **Category:** Software
-- **Team:** HEX HIVE
+- **Project:** NETORACLE
 
 ## System Flow
 
-**Network Traffic Data → Preprocessing → Attack Detection → Stage Forecasting → Time-to-Escalation → Attack Story → Early Warning → Recommendation Engine → HEX HIVE Dashboard**
+**Network Traffic Data → Preprocessing → Attack Detection → Stage Forecasting → Time-to-Escalation → Attack Story → Early Warning → Recommendation Engine → NETORACLE Dashboard**
 
 NETORACLE is an advanced AI-based cybersecurity early-warning and network attack forecasting system. Unlike traditional Intrusion Detection Systems (IDS) that mainly provide reactive alerts, NETORACLE aims to go beyond detection:
 
@@ -28,7 +28,7 @@ NETORACLE is an advanced AI-based cybersecurity early-warning and network attack
 
 ---
 
-## Current Status: Phase 10 Completed
+## Current Status: Phase 11 Completed
 
 | Phase | Description | Status |
 |---|---|---|
@@ -42,6 +42,7 @@ NETORACLE is an advanced AI-based cybersecurity early-warning and network attack
 | **Phase 8** | Real Attack Story & Event Correlation (5 SOC Questions, Timelines, Clustering) | ✅ Completed |
 | **Phase 9** | Real Early Warning Engine (Multi-Source Evidence, Deterministic Decision Matrix) | ✅ Completed |
 | **Phase 10** | Real Security Recommendation Engine (Contextual Defensive Actions, Lifecycle Tracking) | ✅ Completed |
+| **Phase 11** | Real Explainable AI (XAI) using SHAP TreeExplainer (Feature Attribution & Global Importance) | ✅ Completed |
 
 ---
 
@@ -53,6 +54,8 @@ Network Traffic Flow Telemetry
 Preprocessing & Feature Normalization (78 features)
             ↓
 Phase 5 Binary Attack Detection (BENIGN vs ATTACK) — 99.0% Accuracy
+            ↓
+Phase 11 Real Explainable AI (XAI) — TreeExplainer SHAP Local & Global Feature Attribution
             ↓
 Phase 6 Multi-Class Stage Classification (BENIGN, PortScan, Bot, DDoS) — 98.0% Accuracy
             ↓
@@ -66,9 +69,37 @@ Phase 9 Real Early Warning Engine (Multi-Source Evidence, Decision Matrix & Aler
             ↓
 Phase 10 Real Security Recommendation Engine (Defensive Actions, Evidence Trails & Lifecycle)
             ↓
-HEX HIVE SOC Dashboard (RecommendedActionsCard) & Dedicated Triage Page (RecommendationsPage)
+NETORACLE SOC Dashboard (ExplainabilityCard, RecommendedActionsCard & Full Intelligence Flow)
 ```
 
+
+---
+
+## Phase 11: Real Explainable AI (XAI)
+
+### Scientific Purpose & Non-Causal Grounding
+Phase 11 makes NETORACLE explain **why** the Phase 5 machine-learning model reached its binary detection result (`ATTACK` vs `BENIGN`).
+- **Real SHAP Values:** Driven by Lundberg & Lee's `shap.TreeExplainer` applied directly to the trained Phase 5 `RandomForestClassifier` (`ml/models/attack_classifier.joblib`, 100 trees, 78 continuous numerical flow features).
+- **Exact Mathematical Decomposition:**
+  $$E[f_c(x)] + \sum_{i=1}^{78} \phi_{i, c} = \hat{P}(\text{class}=c \mid x)$$
+  where $E[f_c(x)]$ is the model's base expected value across the dataset (e.g. $0.4192$ for ATTACK, $0.5808$ for BENIGN), and $\phi_{i, c}$ is the Shapley attribution of feature $i$ for class $c$.
+- **Strictly Non-Causal Framing:** The explanation communicates how statistical telemetry features influenced the machine learning model's classification boundary within the CICIDS2017 continuous feature space. The system never claims that a feature *physically caused* an attack or represents definitive proof of a breach.
+
+### Local Instance Attribution & Global Feature Importance
+1. **Local Explanation (`POST /api/explainability/explain`):**
+   - Evaluates a specific flow record or benchmark preset (`attack` or `benign`).
+   - Ranks the top $N$ features by absolute attribution magnitude ($|\phi_i|$).
+   - Identifies whether each feature pushed **toward** the prediction ($\phi_i > 0$) or **away** ($\phi_i < 0$).
+   - Displays actual normalized telemetry values alongside intuitive human-friendly feature names (e.g., `Bwd Packet Length Std` $\to$ *Backward Packet Size Variance*).
+   - Provides both a simple narrative summary and a rigorous technical mathematical decomposition.
+2. **Global Feature Importance (`GET /api/explainability/global`):**
+   - Evaluates mean absolute SHAP values across all 500 benchmark flows in the CICIDS2017 dataset.
+   - Identifies the highest leverage telemetry metrics across the ensemble tree split decisions:
+     - *Backward Packet Size Variance* (`Bwd Packet Length Std`): ~0.0501 mean |SHAP|
+     - *Mean Backward Packet Size* (`Bwd Packet Length Mean`): ~0.0452 mean |SHAP|
+     - *Average Backward Segment Size* (`Avg Bwd Segment Size`): ~0.0395 mean |SHAP|
+     - *Minimum Backward Packet Size* (`Bwd Packet Length Min`): ~0.0361 mean |SHAP|
+     - *Maximum Backward Packet Size* (`Bwd Packet Length Max`): ~0.0337 mean |SHAP|
 
 ---
 
@@ -207,6 +238,11 @@ Escalation is defined as the transition from a lower-severity pre-attack conditi
 ---
 
 ## API Endpoints
+
+### Phase 11 Explainability Endpoints
+- `GET /api/explainability/status` — Returns TreeExplainer readiness, model type, 78 feature dimensions, and documented scientific limitations.
+- `POST /api/explainability/explain` — Computes local SHAP feature attributions, base values, and non-causal explanation narratives for a flow vector or scenario preset (`attack`, `benign`, `auto`).
+- `GET /api/explainability/global` — Returns dataset-wide global feature importance rankings based on mean absolute SHAP values across 500 benchmark evaluation records.
 
 ### Phase 10 Security Recommendations Endpoints
 - `GET /api/recommendations/status` — Returns recommendation engine readiness, active threat posture, summary counts (total, pending, acknowledged, resolved), and limitations.

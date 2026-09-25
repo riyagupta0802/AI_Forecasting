@@ -46,6 +46,14 @@ from app.schemas.recommendations import (
     RecommendationGenerateRequest,
     RecommendationStatusUpdateRequest,
 )
+from app.schemas.explainability import (
+    FeatureContributionSchema,
+    LocalExplanationResponse,
+    GlobalFeatureItemSchema,
+    GlobalExplanationResponse,
+    ExplainabilityStatusResponse,
+    ExplainRequest,
+)
 
 __all__ = [
     "HealthResponse",
@@ -85,6 +93,12 @@ __all__ = [
     "RecommendationsResponse",
     "RecommendationGenerateRequest",
     "RecommendationStatusUpdateRequest",
+    "FeatureContributionSchema",
+    "LocalExplanationResponse",
+    "GlobalFeatureItemSchema",
+    "GlobalExplanationResponse",
+    "ExplainabilityStatusResponse",
+    "ExplainRequest",
 ]
 
 
