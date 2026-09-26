@@ -14,18 +14,38 @@ import {
   Activity,
 } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
+import DemoBadge from '../common/DemoBadge';
 import apiService from '../../services/api';
 
-export const ExplainabilityCard = () => {
+export const ExplainabilityCard = ({ explanationData: propExp = null }) => {
   const { t } = useLanguage();
+  const lastAnalysis = apiService.getLastAnalysis();
   const [activeTab, setActiveTab] = useState('local'); // 'local' | 'global'
   const [viewMode, setViewMode] = useState('simple'); // 'simple' | 'technical'
   const [sampleType, setSampleType] = useState('attack');
-  const [localExplanation, setLocalExplanation] = useState(null);
+  const [localExplanation, setLocalExplanation] = useState(
+    propExp || lastAnalysis?.explainability || null
+  );
   const [globalExplanation, setGlobalExplanation] = useState(null);
   const [loadingLocal, setLoadingLocal] = useState(false);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (propExp) {
+      setLocalExplanation(propExp);
+    }
+  }, [propExp]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.explainability) {
+        setLocalExplanation(e.detail.explainability);
+      }
+    };
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchLocalExplanation = useCallback(async (type) => {
     setLoadingLocal(true);
@@ -204,7 +224,11 @@ export const ExplainabilityCard = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <span className="rec-live-badge">{t('xai.badge')}</span>
+          {lastAnalysis ? (
+            <DemoBadge customText={`Source: ${lastAnalysis.dataset_name}`} size="small" />
+          ) : (
+            <span className="rec-live-badge">{t('xai.badge')}</span>
+          )}
           <span className="xai-meta-tag">{t('xai.featuresCount')}</span>
         </div>
       </div>

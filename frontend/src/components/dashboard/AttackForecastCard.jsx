@@ -22,18 +22,33 @@ import apiService from '../../services/api';
  * Real Machine Learning Attack Stage Forecasting & Time-to-Escalation Engine.
  * Integrates Detection -> Multi-Stage Forecasting -> Velocity-Calibrated Escalation Windows.
  */
-export const AttackForecastCard = ({ forecastData: initialForecast }) => {
+export const AttackForecastCard = ({ forecastData: initialForecast, escalationData: initialEscalation }) => {
   const { t } = useLanguage();
 
-  const [forecast, setForecast] = useState(initialForecast || null);
-  const [escalation, setEscalation] = useState(null);
+  const lastAnalysis = apiService.getLastAnalysis();
+  const [forecast, setForecast] = useState(initialForecast || lastAnalysis?.forecast || null);
+  const [escalation, setEscalation] = useState(initialEscalation || lastAnalysis?.escalation || null);
   const [forecastMetrics, setForecastMetrics] = useState(null);
   const [escalationMetrics, setEscalationMetrics] = useState(null);
-  const [loading, setLoading] = useState(!initialForecast);
+  const [loading, setLoading] = useState(!initialForecast && !lastAnalysis);
   const [testingSample, setTestingSample] = useState(false);
   const [activeSample, setActiveSample] = useState('benign');
   const [error, setError] = useState(null);
   const [lastInferenceTime, setLastInferenceTime] = useState(null);
+
+  useEffect(() => {
+    if (initialForecast) setForecast(initialForecast);
+    if (initialEscalation) setEscalation(initialEscalation);
+  }, [initialForecast, initialEscalation]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.forecast) setForecast(e.detail.forecast);
+      if (e.detail?.escalation) setEscalation(e.detail.escalation);
+    };
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchCardData = useCallback(async () => {
     setLoading(true);
@@ -207,7 +222,9 @@ export const AttackForecastCard = ({ forecastData: initialForecast }) => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {forecast?.forecast_available ? (
+          {lastAnalysis ? (
+            <DemoBadge customText={`Source: ${lastAnalysis.dataset_name}`} size="small" />
+          ) : forecast?.forecast_available ? (
             <span
               style={{
                 display: 'inline-flex',

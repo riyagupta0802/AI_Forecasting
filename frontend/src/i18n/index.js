@@ -7,7 +7,7 @@ export const SUPPORTED_LANGUAGES = {
 };
 
 export const DEFAULT_LANGUAGE = 'en';
-export const STORAGE_KEY = 'hexhive_language';
+export const STORAGE_KEY = 'netoracle_language';
 
 export const translations = {
   en,
@@ -16,7 +16,7 @@ export const translations = {
 
 /**
  * Resolves a nested key in a translation object.
- * e.g., getTranslationValue(en, 'brand.projectName') -> 'HEX HIVE'
+ * e.g., getTranslationValue(en, 'brand.projectName') -> 'NETORACLE'
  */
 export function getTranslationValue(dictionary, keyPath) {
   if (!dictionary || !keyPath) return keyPath;

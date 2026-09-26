@@ -17,14 +17,27 @@ import { useLanguage } from '../../hooks/useLanguage';
 import DemoBadge from '../common/DemoBadge';
 import apiService from '../../services/api';
 
-export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
+export const AttackStoryPreview = ({ showCorrelationGraph = true, storyData: propStory = null }) => {
   const { t } = useLanguage();
 
+  const lastAnalysis = apiService.getLastAnalysis();
   const [selectedScenario, setSelectedScenario] = useState('ALL');
-  const [storyData, setStoryData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [storyData, setStoryData] = useState(propStory || lastAnalysis?.attack_story || null);
+  const [isLoading, setIsLoading] = useState(!propStory && !lastAnalysis?.attack_story);
   const [error, setError] = useState(null);
   const [expandedNodeId, setExpandedNodeId] = useState(null);
+
+  useEffect(() => {
+    if (propStory) setStoryData(propStory);
+  }, [propStory]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.attack_story) setStoryData(e.detail.attack_story);
+    };
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchAttackStory = useCallback(async (scenario = 'ALL') => {
     setIsLoading(true);
@@ -57,8 +70,10 @@ export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
   }, []);
 
   useEffect(() => {
-    fetchAttackStory(selectedScenario);
-  }, [fetchAttackStory, selectedScenario]);
+    if (!propStory && !lastAnalysis?.attack_story) {
+      fetchAttackStory(selectedScenario);
+    }
+  }, [fetchAttackStory, selectedScenario, propStory]);
 
   const handleScenarioChange = (scenario) => {
     setSelectedScenario(scenario);
@@ -105,7 +120,11 @@ export const AttackStoryPreview = ({ showCorrelationGraph = true }) => {
           >
             <RefreshCw size={13} className={isLoading ? 'spin-icon' : ''} />
           </button>
-          <DemoBadge type="live" />
+          {lastAnalysis ? (
+            <DemoBadge customText={`Source: ${lastAnalysis.dataset_name}`} size="small" />
+          ) : (
+            <DemoBadge type="live" />
+          )}
         </div>
       </div>
 

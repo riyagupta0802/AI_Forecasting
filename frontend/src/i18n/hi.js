@@ -1,6 +1,6 @@
 /**
- * Hindi (hi) Translation Dictionary for HEX HIVE - Phase 2
- * हिन्दी अनुवाद शब्दकोश - चरण 2
+ * Hindi (hi) Translation Dictionary for NETORACLE
+ * हिन्दी अनुवाद शब्दकोश
  */
 export default {
   brand: {

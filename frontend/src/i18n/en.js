@@ -1,5 +1,5 @@
 /**
- * English (en) Translation Dictionary for HEX HIVE - Phase 2
+ * English (en) Translation Dictionary for NETORACLE
  */
 export default {
   brand: {

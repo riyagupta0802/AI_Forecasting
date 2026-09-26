@@ -1,4 +1,4 @@
-"""Pydantic Schemas for HEX HIVE Phase 6 Attack Forecasting.
+"""Pydantic Schemas for NETORACLE Phase 6 Attack Forecasting.
 
 Preserves the existing Phase 3/5 ForecastStatusResponse contract while extending it
 with real machine learning progression states, metrics, and inference interfaces.

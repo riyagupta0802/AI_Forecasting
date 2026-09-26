@@ -1,4 +1,4 @@
-"""Data status schemas for HEX HIVE Phase 4 data preprocessing."""
+"""Data status schemas for NETORACLE Phase 4 data preprocessing."""
 
 from typing import List
 from pydantic import BaseModel, Field

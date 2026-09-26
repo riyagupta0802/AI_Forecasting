@@ -2,7 +2,7 @@ import React from 'react';
 import { ShieldAlert, RefreshCw, RotateCcw } from 'lucide-react';
 
 /**
- * ErrorBoundary - Protects the HEX HIVE SOC Dashboard against uncaught component crashes.
+ * ErrorBoundary - Protects the NETORACLE SOC Dashboard against uncaught component crashes.
  * Intercepts JavaScript rendering errors and prevents white/black screen cascade unmounts.
  */
 export class ErrorBoundary extends React.Component {

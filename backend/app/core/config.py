@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     # In Phase 1, no active database connection is initiated.
     MONGODB_URI: Union[str, None] = None
 
-    MONGODB_DB_NAME: str = "hex_hive_db"
+    MONGODB_DB_NAME: str = "netoracle_db"
 
     model_config = SettingsConfigDict(
         env_file=".env",

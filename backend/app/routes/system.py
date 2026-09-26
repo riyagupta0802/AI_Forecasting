@@ -13,7 +13,7 @@ MODEL_PATH = Path(__file__).resolve().parent.parent.parent.parent / "ml" / "mode
     description="Returns status of backend, ML engine, and database.",
 )
 async def get_system_status() -> SystemStatusResponse:
-    """Return component status of HEX HIVE system."""
+    """Return component status of NETORACLE system."""
     ml_status = "loaded" if MODEL_PATH.is_file() else "not_loaded"
     return SystemStatusResponse(
         status="online",

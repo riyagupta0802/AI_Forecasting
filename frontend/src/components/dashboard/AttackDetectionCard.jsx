@@ -21,14 +21,25 @@ import apiService from '../../services/api';
  * Real Random Forest Attack Classification (BENIGN vs ATTACK)
  * Displays actual test metrics, model health, and interactive live inference tester.
  */
-export const AttackDetectionCard = () => {
+export const AttackDetectionCard = ({ analysisData: propData }) => {
   const { t } = useLanguage();
+  const [analysisData, setAnalysisData] = useState(propData || apiService.getLastAnalysis());
   const [mlStatus, setMlStatus] = useState(null);
   const [metrics, setMetrics] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [testing, setTesting] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (propData) setAnalysisData(propData);
+  }, [propData]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => setAnalysisData(e.detail);
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchMLData = async () => {
     setLoading(true);
@@ -195,9 +206,56 @@ export const AttackDetectionCard = () => {
             <CheckCircle size={13} />
             {isModelReady ? t('detection.modelLoaded') : t('detection.modelUnavailable')}
           </span>
-          <DemoBadge type="prototype" size="small" />
+          {analysisData ? (
+            <DemoBadge customText={`Source: ${analysisData.dataset_name}`} size="small" />
+          ) : (
+            <DemoBadge type="prototype" size="small" />
+          )}
         </div>
       </div>
+
+      {/* Verified Analysis Banner if dataset loaded */}
+      {analysisData && (
+        <div
+          style={{
+            marginTop: '1rem',
+            padding: '0.85rem 1rem',
+            background: 'rgba(16, 185, 129, 0.08)',
+            border: '1px solid var(--accent-green)',
+            borderRadius: '6px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+          }}
+        >
+          <div>
+            <span style={{ fontWeight: 600, color: 'var(--accent-green)', fontSize: '0.88rem' }}>
+              Dataset Ingestion Active: {analysisData.dataset_name}
+            </span>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+              Evaluated {analysisData.total_records?.toLocaleString()} network flows. Detected:{' '}
+              <strong style={{ color: 'var(--accent-red)' }}>{analysisData.attack_count} Attacks ({analysisData.attack_percentage}%)</strong>,{' '}
+              <strong style={{ color: 'var(--accent-green)' }}>{analysisData.benign_count} Benign</strong>. Average Model Confidence:{' '}
+              <strong className="text-cyan">{analysisData.average_confidence}%</strong>.
+            </p>
+          </div>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'var(--accent-green)',
+              padding: '0.25rem 0.65rem',
+              background: 'rgba(16, 185, 129, 0.15)',
+              borderRadius: '12px',
+              border: '1px solid var(--accent-green)',
+            }}
+          >
+            {analysisData.source_type}
+          </span>
+        </div>
+      )}
 
       {/* Model Performance Metrics Grid */}
       <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>

@@ -1,4 +1,4 @@
-"""Time-to-Escalation API Routes for HEX HIVE Phase 7.
+"""Time-to-Escalation API Routes for NETORACLE Phase 7.
 
 Provides endpoints for:
 - GET  /api/escalation/status  (Active threat escalation status and estimated window)
@@ -26,7 +26,7 @@ from app.schemas.escalation import (
 )
 from ml.escalation.predict import escalation_predictor
 
-logger = logging.getLogger("HEX_HIVE.Routes.Escalation")
+logger = logging.getLogger("NETORACLE.Routes.Escalation")
 router = APIRouter(prefix="/escalation", tags=["Time-to-Escalation"])
 
 METRICS_PATH = REPO_ROOT / "ml" / "models" / "escalation_metrics.json"

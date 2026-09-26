@@ -8,6 +8,7 @@ export const SummaryCard = ({
   icon: Icon,
   badgeType = 'demo',
   variant = 'default',
+  customBadgeText = null,
 }) => {
   return (
     <div className={`soc-summary-card ${variant ? `variant-${variant}` : ''}`}>
@@ -21,7 +22,7 @@ export const SummaryCard = ({
       <div className="soc-summary-body">
         <div className="soc-summary-val-row">
           <span className="soc-summary-value">{value}</span>
-          <DemoBadge type={badgeType} size="small" />
+          <DemoBadge type={badgeType} size="small" customText={customBadgeText} />
         </div>
         {subtitle && <span className="soc-summary-sub">{subtitle}</span>}
       </div>

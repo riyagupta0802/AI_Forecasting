@@ -1,4 +1,4 @@
-"""Pydantic schemas for Machine Learning endpoints in HEX HIVE Phase 5."""
+"""Pydantic schemas for Machine Learning endpoints in NETORACLE Phase 5."""
 
 from typing import Dict, List, Optional, Union
 from pydantic import BaseModel, Field

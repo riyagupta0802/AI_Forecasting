@@ -1,4 +1,4 @@
-"""Data and Preprocessing Status API Route for HEX HIVE Phase 4.
+"""Data and Preprocessing Status API Route for NETORACLE Phase 4.
 
 Provides dynamic inspection of dataset ingestion and preprocessing pipeline outputs.
 """

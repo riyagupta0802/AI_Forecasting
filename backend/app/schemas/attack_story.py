@@ -1,4 +1,4 @@
-"""Pydantic Schemas for HEX HIVE Phase 8 Attack Story.
+"""Pydantic Schemas for NETORACLE Phase 8 Attack Story.
 
 Defines schemas for normalized security events, correlated campaign clusters,
 chronological timeline nodes, structured narratives, and story generation requests.

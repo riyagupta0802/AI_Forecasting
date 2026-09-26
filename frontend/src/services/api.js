@@ -1,12 +1,13 @@
 import { API_BASE_URL } from '../utils/constants.js';
 
 /**
- * HEX HIVE API Service Layer
+ * NETORACLE API Service Layer
  * Centralized HTTP client communicating with FastAPI backend
  */
 class ApiService {
   constructor(baseUrl = API_BASE_URL) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
+    this._cachedAnalysis = null;
   }
 
   /**
@@ -16,15 +17,22 @@ class ApiService {
     const startTime = performance.now();
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || 4000);
+      const timeoutId = setTimeout(() => controller.abort(), options.timeout || 10000);
 
       const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+      const headers = {
+        'Accept': 'application/json',
+        ...(options.headers || {}),
+      };
+
+      // Let browser set multipart boundary when using FormData
+      if (options.body instanceof FormData) {
+        delete headers['Content-Type'];
+      }
+
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          ...(options.headers || {}),
-        },
+        headers,
         signal: controller.signal,
         ...options,
       });
@@ -33,11 +41,19 @@ class ApiService {
       const latencyMs = Math.round(performance.now() - startTime);
 
       if (!response.ok) {
+        let errorDetail = `HTTP ${response.status} ${response.statusText}`;
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.detail) {
+            errorDetail = errJson.detail;
+          }
+        } catch (_) {}
+
         return {
           ok: false,
           status: response.status,
           latencyMs,
-          error: `HTTP ${response.status} ${response.statusText}`,
+          error: errorDetail,
           data: null,
         };
       }
@@ -322,6 +338,96 @@ class ApiService {
     return this.request(`/explainability/global?top_n=${encodeURIComponent(topN)}`);
   }
 
+  /**
+   * Validate dataset column headers against Phase 5 78-feature schema: POST /api/analyze/validate
+   */
+  async validateDataset(formData) {
+    return this.request('/analyze/validate', {
+      method: 'POST',
+      body: formData,
+      timeout: 15000,
+    });
+  }
+
+  /**
+   * Run full Phase 5–11 multi-phase analysis on uploaded dataset: POST /api/analyze
+   */
+  async analyzeDataset(formData) {
+    const res = await this.request('/analyze', {
+      method: 'POST',
+      body: formData,
+      timeout: 60000,
+    });
+    if (res.ok && res.data) {
+      this.setLastAnalysis(res.data);
+    }
+    return res;
+  }
+
+  /**
+   * Run analysis via raw JSON/text: POST /api/analyze/json
+   */
+  async analyzeDatasetJson(payload = {}) {
+    const res = await this.request('/analyze/json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      timeout: 60000,
+    });
+    if (res.ok && res.data) {
+      this.setLastAnalysis(res.data);
+    }
+    return res;
+  }
+
+  /**
+   * Get direct download URL for sample test dataset CSV
+   */
+  getSampleCsvUrl() {
+    return `${this.baseUrl}/analyze/sample-csv`;
+  }
+
+  /**
+   * Retrieve cached last analysis from memory or sessionStorage
+   */
+  getLastAnalysis() {
+    if (this._cachedAnalysis) {
+      return this._cachedAnalysis;
+    }
+    try {
+      const stored = sessionStorage.getItem('netoracle_last_analysis');
+      if (stored) {
+        this._cachedAnalysis = JSON.parse(stored);
+        return this._cachedAnalysis;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /**
+   * Cache analysis in memory & sessionStorage, and dispatch update event
+   */
+  setLastAnalysis(data) {
+    this._cachedAnalysis = data;
+    try {
+      sessionStorage.setItem('netoracle_last_analysis', JSON.stringify(data));
+      window.dispatchEvent(new CustomEvent('netoracle-analysis-updated', { detail: data }));
+    } catch (_) {}
+  }
+
+  /**
+   * Clear cached analysis
+   */
+  clearLastAnalysis() {
+    this._cachedAnalysis = null;
+    try {
+      sessionStorage.removeItem('netoracle_last_analysis');
+      window.dispatchEvent(new CustomEvent('netoracle-analysis-updated', { detail: null }));
+    } catch (_) {}
+  }
+
   getBaseUrl() {
     return this.baseUrl;
   }
@@ -330,3 +436,4 @@ class ApiService {
 
 export const apiService = new ApiService();
 export default apiService;
+

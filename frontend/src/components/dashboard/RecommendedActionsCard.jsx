@@ -48,13 +48,37 @@ const getPriorityClass = (priority) => {
   }
 };
 
-export const RecommendedActionsCard = () => {
+export const RecommendedActionsCard = ({ recommendationsData: propRecs = null }) => {
   const { t } = useLanguage();
-  const [recommendations, setRecommendations] = useState([]);
-  const [summary, setSummary] = useState(null);
+
+  const lastAnalysis = apiService.getLastAnalysis();
+  const [recommendations, setRecommendations] = useState(
+    propRecs?.recommendations || lastAnalysis?.recommendations?.recommendations || []
+  );
+  const [summary, setSummary] = useState(
+    propRecs?.summary || lastAnalysis?.recommendations?.summary || null
+  );
   const [selectedContext, setSelectedContext] = useState('auto');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(!propRecs && !lastAnalysis?.recommendations);
   const [updatingId, setUpdatingId] = useState(null);
+
+  useEffect(() => {
+    if (propRecs) {
+      setRecommendations(propRecs.recommendations || []);
+      setSummary(propRecs.summary || null);
+    }
+  }, [propRecs]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.recommendations) {
+        setRecommendations(e.detail.recommendations.recommendations || []);
+        setSummary(e.detail.recommendations.summary || null);
+      }
+    };
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchRecommendations = useCallback(async (context) => {
     setIsLoading(true);
@@ -72,8 +96,10 @@ export const RecommendedActionsCard = () => {
   }, [selectedContext]);
 
   useEffect(() => {
-    fetchRecommendations(selectedContext);
-  }, [fetchRecommendations, selectedContext]);
+    if (!propRecs && !lastAnalysis?.recommendations) {
+      fetchRecommendations(selectedContext);
+    }
+  }, [fetchRecommendations, selectedContext, propRecs]);
 
   const handleScenarioChange = (ctx) => {
     setSelectedContext(ctx);
@@ -114,7 +140,23 @@ export const RecommendedActionsCard = () => {
           <p className="soc-card-sub">{t('recommendations.pageSubtitle')}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span className="rec-live-badge">{t('recommendations.liveBadge')}</span>
+          {lastAnalysis ? (
+            <span
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--accent-green)',
+                padding: '0.2rem 0.6rem',
+                borderRadius: '12px',
+                border: '1px solid var(--accent-green)',
+                background: 'rgba(16, 185, 129, 0.15)',
+              }}
+            >
+              Source: {lastAnalysis.dataset_name}
+            </span>
+          ) : (
+            <span className="rec-live-badge">{t('recommendations.liveBadge')}</span>
+          )}
           {summary && (
             <span className="rec-summary-pill">
               {summary.pending} {t('recommendations.pendingReview')}

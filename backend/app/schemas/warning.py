@@ -1,4 +1,4 @@
-"""Pydantic schemas for HEX HIVE Phase 9 Early Warning Engine.
+"""Pydantic schemas for NETORACLE Phase 9 Early Warning Engine.
 
 Defines API request/response contracts for warning evaluation, active alerts,
 evidence breakdowns, and history logs.

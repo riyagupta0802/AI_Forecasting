@@ -1,4 +1,4 @@
-"""Early Warning Engine API Routes for HEX HIVE Phase 9.
+"""Early Warning Engine API Routes for NETORACLE Phase 9.
 
 Provides endpoints for:
 - GET  /api/warnings/status   (Warning engine readiness and active status)
@@ -26,7 +26,7 @@ from app.schemas.warning import (
 )
 from ml.warning import early_warning_engine
 
-logger = logging.getLogger("HEX_HIVE.Routes.Warnings")
+logger = logging.getLogger("NETORACLE.Routes.Warnings")
 router = APIRouter(prefix="/warnings", tags=["Early Warnings"])
 
 

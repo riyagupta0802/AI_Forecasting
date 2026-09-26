@@ -1,15 +1,16 @@
-"""API Route Registry for HEX HIVE.
+"""API Route Registry for NETORACLE.
 
 Mounts modular endpoint routers under /api:
-- GET /api/health           (Health check)
-- GET /api/system/status    (Component architecture status)
-- GET /api/network/summary  (Network security summary metrics - Demo)
-- GET /api/forecast/status  (Attack forecasting status placeholder)
-- GET /api/traffic/sample   (Sample network traffic dataset - Demo)
-- GET /api/data/status      (Dataset & preprocessing status - Phase 4)
-- GET /api/ml/status        (Random Forest model status - Phase 5)
-- GET /api/ml/metrics       (Test evaluation performance metrics - Phase 5)
+- GET  /api/health           (Health check)
+- GET  /api/system/status    (Component architecture status)
+- GET  /api/network/summary  (Network security summary metrics - Demo)
+- GET  /api/forecast/status  (Attack forecasting status placeholder)
+- GET  /api/traffic/sample   (Sample network traffic dataset - Demo)
+- GET  /api/data/status      (Dataset & preprocessing status - Phase 4)
+- GET  /api/ml/status        (Random Forest model status - Phase 5)
+- GET  /api/ml/metrics       (Test evaluation performance metrics - Phase 5)
 - POST /api/ml/predict      (Real binary attack detection inference - Phase 5)
+- POST /api/analyze         (Full dataset ingestion and multi-phase analysis)
 """
 
 from fastapi import APIRouter
@@ -25,6 +26,7 @@ from app.routes.attack_story import router as attack_story_router
 from app.routes.warning import router as warning_router
 from app.routes.recommendations import router as recommendations_router
 from app.routes.explainability import router as explainability_router
+from app.routes.analyze import router as analyze_router
 
 api_router = APIRouter()
 
@@ -41,6 +43,7 @@ api_router.include_router(attack_story_router)
 api_router.include_router(warning_router)
 api_router.include_router(recommendations_router)
 api_router.include_router(explainability_router)
+api_router.include_router(analyze_router)
 
 __all__ = ["api_router"]
 

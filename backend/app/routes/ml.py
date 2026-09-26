@@ -1,4 +1,4 @@
-"""Machine Learning and Attack Detection API Routes for HEX HIVE Phase 5.
+"""Machine Learning and Attack Detection API Routes for NETORACLE Phase 5.
 
 Provides endpoints for:
 - GET  /api/ml/status  (Random Forest model status & readiness)

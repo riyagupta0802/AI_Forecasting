@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+_repo_root = Path(__file__).resolve().parent.parent.parent
+_backend_root = Path(__file__).resolve().parent.parent
+for p in (str(_repo_root), str(_backend_root)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,8 +28,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="AI-based Network Attack Forecasting & Early Warning System - Phase 6 Real Attack Forecasting",
-    version="1.0.0-phase6",
+    description="NETORACLE - AI-based Network Attack Forecasting & Early Warning System",
+    version="1.0.0",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -44,7 +53,7 @@ async def root():
     """Root entry point providing basic project info."""
     return {
         "project": settings.PROJECT_NAME,
-        "phase": "Phase 6 - Real Attack Forecasting",
+        "phase": "Phase 1–11 Full Operational System",
         "docs": "/docs",
         "health": f"{settings.API_PREFIX}/health",
     }

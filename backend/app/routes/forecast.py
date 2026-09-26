@@ -1,4 +1,4 @@
-"""Attack Forecasting API Routes for HEX HIVE Phase 6.
+"""Attack Forecasting API Routes for NETORACLE Phase 6.
 
 Provides endpoints for:
 - GET  /api/forecast/status  (Real attack forecast status & lifecycle progression)
@@ -27,7 +27,7 @@ from app.schemas.forecast import (
 from ml.forecasting.predict import forecaster
 from ml.escalation.predict import escalation_predictor
 
-logger = logging.getLogger("HEX_HIVE.Routes.Forecast")
+logger = logging.getLogger("NETORACLE.Routes.Forecast")
 router = APIRouter(prefix="/forecast", tags=["Attack Forecasting"])
 
 METRICS_PATH = REPO_ROOT / "ml" / "models" / "forecast_metrics.json"

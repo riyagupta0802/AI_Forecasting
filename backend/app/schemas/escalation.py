@@ -1,4 +1,4 @@
-"""Pydantic Schemas for HEX HIVE Phase 7 Time-to-Escalation.
+"""Pydantic Schemas for NETORACLE Phase 7 Time-to-Escalation.
 
 Defines request and response interfaces for escalation window estimation,
 evaluation metrics, risk thresholds, and live multi-phase prediction.

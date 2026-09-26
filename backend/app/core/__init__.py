@@ -1,2 +1,2 @@
-"""Core configuration module for HEX HIVE backend."""
+"""Core configuration module for NETORACLE backend."""
 

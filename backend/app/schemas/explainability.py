@@ -1,4 +1,4 @@
-"""Pydantic schemas for HEX HIVE Phase 11: Real Explainable AI (XAI).
+"""Pydantic schemas for NETORACLE Phase 11: Real Explainable AI (XAI).
 
 Defines API request/response contracts for local and global SHAP explanations,
 feature contributions, mathematical margin scores, and human-readable summaries.

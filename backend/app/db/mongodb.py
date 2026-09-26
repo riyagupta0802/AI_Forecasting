@@ -1,4 +1,4 @@
-"""MongoDB Architecture Configuration Stub for HEX HIVE.
+"""MongoDB Architecture Configuration Stub for NETORACLE.
 
 This module prepares the architectural integration for MongoDB.
 In accordance with Phase 1 guidelines:
@@ -12,7 +12,7 @@ import logging
 from typing import Any, Optional
 from app.core.config import settings
 
-logger = logging.getLogger("hexhive.db")
+logger = logging.getLogger("netoracle.db")
 
 
 class MongoDBManager:

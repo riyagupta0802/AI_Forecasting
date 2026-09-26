@@ -1,4 +1,4 @@
-"""Database package for HEX HIVE."""
+"""Database package for NETORACLE."""
 
 from app.db.mongodb import get_database
 

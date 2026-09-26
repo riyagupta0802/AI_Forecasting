@@ -1,4 +1,4 @@
-"""Attack Story API Routes for HEX HIVE Phase 8.
+"""Attack Story API Routes for NETORACLE Phase 8.
 
 Provides endpoints for:
 - GET  /api/attack-story/status   (Attack story engine inventory and readiness)
@@ -26,7 +26,7 @@ from app.schemas.attack_story import (
 )
 from ml.attack_story.story import attack_story_engine
 
-logger = logging.getLogger("HEX_HIVE.Routes.AttackStory")
+logger = logging.getLogger("NETORACLE.Routes.AttackStory")
 router = APIRouter(prefix="/attack-story", tags=["Attack Story"])
 
 

@@ -1,4 +1,4 @@
-"""Explainable AI (XAI) API Routes for HEX HIVE Phase 11.
+"""Explainable AI (XAI) API Routes for NETORACLE Phase 11.
 
 Provides endpoints for:
 - GET  /api/explainability/status  (XAI engine readiness, model type, and metadata)
@@ -27,7 +27,7 @@ from app.schemas.explainability import (
 )
 from ml.explainability import attack_explainer
 
-logger = logging.getLogger("HEX_HIVE.Routes.Explainability")
+logger = logging.getLogger("NETORACLE.Routes.Explainability")
 router = APIRouter(prefix="/explainability", tags=["Explainable AI (XAI)"])
 
 

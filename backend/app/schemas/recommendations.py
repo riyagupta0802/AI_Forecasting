@@ -1,4 +1,4 @@
-"""Pydantic schemas for HEX HIVE Phase 10 Security Recommendation Engine.
+"""Pydantic schemas for NETORACLE Phase 10 Security Recommendation Engine.
 
 Defines API request/response contracts for defensive recommendations, statistical summaries,
 and operator status updates (PENDING, ACKNOWLEDGED, RESOLVED).

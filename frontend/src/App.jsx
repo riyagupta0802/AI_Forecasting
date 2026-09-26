@@ -13,6 +13,16 @@ const AppContent = () => {
   const { t } = useLanguage();
   const [currentPage, setCurrentPage] = useState('dashboard');
 
+  React.useEffect(() => {
+    const handleNavigate = (e) => {
+      if (e.detail) {
+        setCurrentPage(e.detail);
+      }
+    };
+    window.addEventListener('netoracle-navigate', handleNavigate);
+    return () => window.removeEventListener('netoracle-navigate', handleNavigate);
+  }, []);
+
   const pageMeta = {
     dashboard: {
       title: t('dashboard.title'),

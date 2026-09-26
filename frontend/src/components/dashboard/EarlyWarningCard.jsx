@@ -16,14 +16,27 @@ import { useLanguage } from '../../hooks/useLanguage';
 import DemoBadge from '../common/DemoBadge';
 import apiService from '../../services/api';
 
-export const EarlyWarningCard = () => {
+export const EarlyWarningCard = ({ warningData: propWarning = null }) => {
   const { t } = useLanguage();
 
+  const lastAnalysis = apiService.getLastAnalysis();
   const [scenario, setScenario] = useState('auto');
-  const [warningData, setWarningData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [warningData, setWarningData] = useState(propWarning || lastAnalysis?.early_warning || null);
+  const [isLoading, setIsLoading] = useState(!propWarning && !lastAnalysis?.early_warning);
   const [isEvidenceExpanded, setIsEvidenceExpanded] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (propWarning) setWarningData(propWarning);
+  }, [propWarning]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.early_warning) setWarningData(e.detail.early_warning);
+    };
+    window.addEventListener('netoracle-analysis-updated', handleUpdate);
+    return () => window.removeEventListener('netoracle-analysis-updated', handleUpdate);
+  }, []);
 
   const fetchWarning = useCallback(async (selectedScenario = 'auto') => {
     setIsLoading(true);
@@ -46,12 +59,14 @@ export const EarlyWarningCard = () => {
   }, []);
 
   useEffect(() => {
-    fetchWarning(scenario);
-  }, [fetchWarning, scenario]);
+    if (!propWarning && !lastAnalysis?.early_warning) {
+      fetchWarning(scenario);
+    }
+  }, [fetchWarning, scenario, propWarning]);
 
-  const activeWarning = warningData?.active_warning;
+  const activeWarning = warningData?.active_warning || warningData;
   const severity = activeWarning?.severity || 'INFO';
-  const hasElevatedWarning = warningData?.has_active_warning && severity !== 'INFO';
+  const hasElevatedWarning = (warningData?.has_active_warning || severity !== 'INFO') && severity !== 'INFO';
 
   const getSeverityBadgeClass = (sev) => {
     switch (sev?.toUpperCase()) {
@@ -92,7 +107,11 @@ export const EarlyWarningCard = () => {
           >
             <RefreshCw size={13} className={isLoading ? 'spin-icon' : ''} />
           </button>
-          <DemoBadge type="live" />
+          {lastAnalysis ? (
+            <DemoBadge customText={`Source: ${lastAnalysis.dataset_name}`} size="small" />
+          ) : (
+            <DemoBadge type="live" />
+          )}
         </div>
       </div>
 

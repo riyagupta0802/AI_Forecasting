@@ -1,4 +1,4 @@
-"""Security Recommendation Engine API Routes for HEX HIVE Phase 10.
+"""Security Recommendation Engine API Routes for NETORACLE Phase 10.
 
 Provides endpoints for:
 - GET   /api/recommendations/status                 (Recommendation engine readiness and summary)
@@ -31,7 +31,7 @@ from app.schemas.recommendations import (
 )
 from ml.recommendations import recommendation_engine
 
-logger = logging.getLogger("HEX_HIVE.Routes.Recommendations")
+logger = logging.getLogger("NETORACLE.Routes.Recommendations")
 router = APIRouter(prefix="/recommendations", tags=["Security Recommendations"])
 
 
