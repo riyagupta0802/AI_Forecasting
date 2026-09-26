@@ -49,25 +49,23 @@ export const NetworkTrafficPage = () => {
 
   const analysisSteps = [
     'Loading dataset...',
-    'Preprocessing traffic & scaling 78 features...',
-    'Running Phase 5 Random Forest attack detection...',
-    'Generating Phase 6–10 forecasting, escalation & early warnings...',
-    'Preparing dashboard intelligence...',
+    'Validating columns...',
+    'Preprocessing traffic...',
+    'Running attack detection...',
+    'Generating analysis...',
+    'Preparing dashboard...',
   ];
 
-  // Client-side quick column inspection before server validation
-  const handleFileSelect = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setSelectedFile(file);
+  // Validation function callable on file selection or manually via Validate button
+  const handleValidateFile = async (fileToValidate = selectedFile) => {
+    if (!fileToValidate) return;
     setValidationError(null);
     setIsValidating(true);
     setValidationResult(null);
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', fileToValidate);
 
       const res = await apiService.validateDataset(formData);
       if (res.ok && res.data) {
@@ -82,6 +80,15 @@ export const NetworkTrafficPage = () => {
     }
   };
 
+  // Client-side file selection trigger
+  const handleFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    await handleValidateFile(file);
+  };
+
   // Run full analysis on selected uploaded file
   const handleRunAnalysis = async () => {
     if (!selectedFile && !validationResult?.is_compatible) return;
@@ -90,10 +97,10 @@ export const NetworkTrafficPage = () => {
     setAnalysisError(null);
     setAnalysisStep(0);
 
-    // Simulate step progress for user clarity while server completes analysis
+    // Step progress animation for user clarity
     const stepInterval = setInterval(() => {
-      setAnalysisStep((prev) => (prev < 4 ? prev + 1 : prev));
-    }, 600);
+      setAnalysisStep((prev) => (prev < 5 ? prev + 1 : prev));
+    }, 500);
 
     try {
       const formData = new FormData();
@@ -103,7 +110,7 @@ export const NetworkTrafficPage = () => {
       clearInterval(stepInterval);
 
       if (res.ok && res.data) {
-        setAnalysisStep(4);
+        setAnalysisStep(5);
         setAnalysisResult(res.data);
       } else {
         setAnalysisError(res.error || 'Dataset analysis failed. Please verify CSV compatibility.');
@@ -116,16 +123,16 @@ export const NetworkTrafficPage = () => {
     }
   };
 
-  // Run analysis on local benchmark test dataset (cicids2017_sample.csv)
+  // Run analysis on local benchmark test dataset (netoracle_demo_traffic.csv)
   const handleUseLocalTest = async () => {
     setIsAnalyzing(true);
     setAnalysisError(null);
-    setSelectedFile({ name: 'cicids2017_sample.csv (Local Test Dataset)', size: 171729 });
+    setSelectedFile({ name: 'netoracle_demo_traffic.csv', size: 171729, isLocal: true });
     setAnalysisStep(0);
 
     const stepInterval = setInterval(() => {
-      setAnalysisStep((prev) => (prev < 4 ? prev + 1 : prev));
-    }, 500);
+      setAnalysisStep((prev) => (prev < 5 ? prev + 1 : prev));
+    }, 450);
 
     try {
       const formData = new FormData();
@@ -135,10 +142,10 @@ export const NetworkTrafficPage = () => {
       clearInterval(stepInterval);
 
       if (res.ok && res.data) {
-        setAnalysisStep(4);
+        setAnalysisStep(5);
         setAnalysisResult(res.data);
         setValidationResult({
-          filename: 'cicids2017_sample.csv',
+          filename: res.data.dataset_name || 'netoracle_demo_traffic.csv',
           record_count: res.data.total_records,
           required_feature_count: 78,
           available_required_count: 78,
@@ -146,7 +153,7 @@ export const NetworkTrafficPage = () => {
           available_features: [],
           missing_features: [],
           extra_columns: ['Label'],
-          message: `Dataset validated ✓ Records: ${res.data.total_records} Required features: available Ready for analysis`,
+          message: `Dataset validated ✓ Records: ${res.data.total_records} Required features: 78/78 available Ready for analysis`,
         });
       } else {
         setAnalysisError(res.error || 'Failed to analyze local test dataset.');
@@ -256,7 +263,7 @@ export const NetworkTrafficPage = () => {
             style={{ display: 'none' }}
           />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -281,34 +288,88 @@ export const NetworkTrafficPage = () => {
             </button>
 
             {selectedFile && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.88rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Selected file:</span>
-                <span className="font-mono text-cyan" style={{ fontWeight: 600 }}>
-                  {selectedFile.name}
-                </span>
-                {selectedFile.size && (
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                    ({Math.round(selectedFile.size / 1024)} KB)
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  disabled={isAnalyzing}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--accent-red)',
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                  }}
-                >
-                  Clear
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => handleValidateFile(selectedFile)}
+                disabled={isValidating || isAnalyzing}
+                className="soc-btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.65rem 1.15rem',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  borderRadius: '6px',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  color: 'var(--accent-blue)',
+                  border: '1px solid var(--accent-blue)',
+                  cursor: isValidating || isAnalyzing ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <ShieldCheck size={16} />
+                <span>Validate Dataset</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleRunAnalysis}
+              disabled={isAnalyzing || (!selectedFile && !validationResult?.is_compatible)}
+              className="soc-btn-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.35rem',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                borderRadius: '6px',
+                background: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'var(--bg-card)' : 'var(--accent-green)',
+                color: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'var(--text-muted)' : '#070B14',
+                border: 'none',
+                cursor: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'not-allowed' : 'pointer',
+                boxShadow: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'none' : '0 0 15px rgba(16, 185, 129, 0.4)',
+              }}
+            >
+              <Play size={16} fill="currentColor" />
+              <span>Run Analysis</span>
+            </button>
+
+            {selectedFile && (
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={isAnalyzing}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--accent-red)',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  marginLeft: '0.25rem',
+                }}
+              >
+                Clear
+              </button>
             )}
           </div>
+
+          {/* Selected Dataset Display Label */}
+          {selectedFile && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.88rem', padding: '0.4rem 0.75rem', background: 'var(--bg-secondary)', borderRadius: '6px', border: '1px solid var(--border-subtle)', width: 'fit-content' }}>
+              <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Selected Dataset:</span>
+              <strong className="font-mono text-cyan" style={{ fontWeight: 600 }}>
+                {selectedFile.name}
+              </strong>
+              {selectedFile.size && (
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+                  ({Math.round(selectedFile.size / 1024)} KB)
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Validation Status Indicator */}
           {isValidating && (
@@ -423,33 +484,6 @@ export const NetworkTrafficPage = () => {
             </div>
           )}
 
-          {/* RUN ANALYSIS ACTION BUTTON */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={handleRunAnalysis}
-              disabled={isAnalyzing || (!selectedFile && !validationResult?.is_compatible)}
-              className="soc-btn-primary"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.75rem 1.75rem',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                letterSpacing: '0.04em',
-                borderRadius: '6px',
-                background: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'var(--bg-card)' : 'var(--accent-green)',
-                color: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'var(--text-muted)' : '#070B14',
-                border: 'none',
-                cursor: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'not-allowed' : 'pointer',
-                boxShadow: isAnalyzing || (!selectedFile && !validationResult?.is_compatible) ? 'none' : '0 0 15px rgba(16, 185, 129, 0.4)',
-              }}
-            >
-              <Play size={16} fill="currentColor" />
-              <span>RUN ANALYSIS</span>
-            </button>
-          </div>
         </div>
       </div>
 

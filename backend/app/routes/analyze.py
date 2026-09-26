@@ -26,7 +26,8 @@ logger = logging.getLogger("NETORACLE.Routes.Analyze")
 router = APIRouter(prefix="/analyze", tags=["Dataset Analysis"])
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-SAMPLE_CSV_PATH = REPO_ROOT / "ml" / "data" / "sample" / "cicids2017_sample.csv"
+DEMO_DATASET_PATH = REPO_ROOT / "datasets" / "netoracle_demo_traffic.csv"
+SAMPLE_CSV_PATH = DEMO_DATASET_PATH if DEMO_DATASET_PATH.is_file() else (REPO_ROOT / "ml" / "data" / "sample" / "cicids2017_sample.csv")
 
 
 @router.post(
@@ -47,7 +48,7 @@ async def validate_dataset(
             if not SAMPLE_CSV_PATH.is_file():
                 raise HTTPException(status_code=404, detail="Local sample dataset not found.")
             df = pd.read_csv(SAMPLE_CSV_PATH, nrows=5)
-            filename = "cicids2017_sample.csv"
+            filename = SAMPLE_CSV_PATH.name
         elif file is not None:
             content = await file.read()
             if not content:
@@ -90,7 +91,7 @@ async def analyze_traffic_dataset(
             if not SAMPLE_CSV_PATH.is_file():
                 raise HTTPException(status_code=404, detail="Local sample dataset not found on server.")
             df = pd.read_csv(SAMPLE_CSV_PATH)
-            filename = "cicids2017_sample.csv"
+            filename = SAMPLE_CSV_PATH.name
             source_type = "Local Test Dataset"
         elif file is not None:
             content = await file.read()
